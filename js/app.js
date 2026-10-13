@@ -6,8 +6,9 @@
 
 import { zeigeKleiderschrank } from "./kleiderschrank.js";
 import { zeigeFormular } from "./teil-formular.js";
+import { zeigeOutfit } from "./outfit.js";
 
-const VERSION = "0.3 (Kleidungsstück erfassen)";
+const VERSION = "0.4 (Outfit und Heute getragen)";
 
 const TABS = ["kleiderschrank", "outfit", "wetter"];
 
@@ -37,6 +38,7 @@ async function zeigeSeite() {
 
   try {
     if (bereich === "kleiderschrank") await zeigeKleiderschrank();
+    if (bereich === "outfit") await zeigeOutfit();
     if (istFormular) await zeigeFormular(ziel.startsWith("teil/") ? ziel.slice(5) : null);
     document.getElementById("app-fehler").hidden = true;
   } catch (fehler) {

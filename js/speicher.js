@@ -71,6 +71,39 @@ export function teilLoeschen(id) {
   return inSchublade("teile", "readwrite", (schublade) => schublade.delete(id));
 }
 
+// ---------- „Heute getragen“ ----------
+// Pro Tag ein Eintrag. Die Nummer (id) ist das Datum, z. B. "2026-10-13":
+// {
+//   id: "2026-10-13", datum: "2026-10-13",
+//   teile: ["3f2a…", "9b1c…"],   die Nummern der getragenen Teile
+//   wetter: { tempMax: 15, tempMin: 8, regen: false, regenMm: 0.4, regenProzent: 45, ort: "Berlin" }
+//           (oder null, wenn das Wetter nicht geholt werden konnte)
+// }
+export function alleGetragen() {
+  return inSchublade("getragen", "readonly", (schublade) => schublade.getAll());
+}
+
+export function getragenLaden(id) {
+  return inSchublade("getragen", "readonly", (schublade) => schublade.get(id));
+}
+
+export function getragenSpeichern(eintrag) {
+  return inSchublade("getragen", "readwrite", (schublade) => schublade.put(eintrag));
+}
+
+export function getragenLoeschen(id) {
+  return inSchublade("getragen", "readwrite", (schublade) => schublade.delete(id));
+}
+
+// ---------- Einstellungen (z. B. der Ort fürs Wetter) ----------
+export function einstellungLesen(schluessel) {
+  return inSchublade("einstellungen", "readonly", (schublade) => schublade.get(schluessel));
+}
+
+export function einstellungSpeichern(schluessel, wert) {
+  return inSchublade("einstellungen", "readwrite", (schublade) => schublade.put(wert, schluessel));
+}
+
 // ---------- Hilfen ----------
 
 // Eine neue, eindeutige Nummer für ein Teil

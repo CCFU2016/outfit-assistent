@@ -88,6 +88,9 @@
         <p class="leer-text">Noch ist dein Kleiderschrank leer.</p>
         <p class="klein">Tippe auf „Neues Teil“ und fotografiere dein erstes Kleidungsstück.</p>
       </div>
+      <!-- Filter: nur eine Kategorie zeigen -->
+      <div id="filter-leiste" class="filter-leiste" role="group" aria-label="Nach Kategorie filtern" hidden></div>
+      <p id="filter-leer" class="klein" hidden></p>
       <div id="teile-liste" class="teile-liste"></div>
     </section>
 
@@ -174,11 +177,24 @@
     <!-- Bereich 2: Outfit zusammenstellen -->
     <section id="outfit" class="bereich" aria-labelledby="titel-outfit" hidden>
       <h2 id="titel-outfit" class="bereich-titel">Outfit zusammenstellen</h2>
-      <div class="karte leer">
-        <svg class="leer-symbol" aria-hidden="true"><use href="#symbol-shirt"/></svg>
-        <p class="leer-text">Hier stellst du bald Outfits aus deinen eigenen Teilen zusammen.</p>
-        <p class="klein">Mit „Heute getragen“ merkt sich die App, was du bei welchem Wetter anhattest.</p>
-      </div>
+      <p class="klein einleitung">Tippe auf deine Teile: pro Kategorie eins, Accessoires auch mehrere.</p>
+
+      <!-- Auswahl: eine Reihe pro Kategorie (wird von outfit.js gefüllt) -->
+      <div id="outfit-auswahl"></div>
+
+      <h2 class="bereich-titel">Dein Outfit</h2>
+      <!-- Die gewählten Teile untereinander: oben → unten → Schuhe -->
+      <div id="outfit-vorschau" class="karte outfit-karte"></div>
+
+      <!-- Hier erscheint bei Bedarf die Ort-Auswahl fürs Wetter -->
+      <div id="outfit-ort" hidden></div>
+
+      <button id="knopf-getragen" class="knopf knopf-haupt knopf-breit" type="button" disabled>Heute getragen</button>
+      <p id="outfit-status" class="status" role="status" hidden></p>
+      <p id="outfit-ort-zeile" class="ort-zeile"></p>
+
+      <h2 class="bereich-titel">Zuletzt getragen</h2>
+      <div id="getragen-liste" class="verlauf"></div>
     </section>
 
     <!-- Bereich 3: Wettervorschlag -->
@@ -191,7 +207,7 @@
       </div>
     </section>
 
-    <p class="version">Version <span id="version"></span></p>
+    <p class="version">Version <span id="version"></span> · Wetterdaten: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a></p>
   </main>
 
   <!-- Leiste unten: wechselt zwischen den drei Bereichen -->

@@ -672,3 +672,311 @@ label.feld .feld-titel {
   background: transparent;
   color: var(--rot);
 }
+
+/* ---------- Filter im Kleiderschrank ---------- */
+/* Eine Reihe Knöpfe, die man seitlich wischen kann */
+.filter-leiste {
+  display: flex;
+  gap: 8px;
+  margin: 0 calc(-1 * var(--abstand)) 16px;
+  padding: 2px var(--abstand) 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.filter-leiste::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  min-height: 40px;
+  padding: 6px 14px;
+  border: 1.5px solid var(--rand);
+  border-radius: 999px;
+  background: var(--karte);
+  color: var(--mokka);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.filter-chip small {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.filter-chip[aria-pressed="true"] {
+  border-color: var(--mokka);
+  background: var(--mokka);
+  color: var(--karte);
+}
+
+/* ---------- Outfit zusammenstellen ---------- */
+.einleitung {
+  margin: -4px 0 14px;
+}
+
+.reihe {
+  margin-bottom: 14px;
+}
+
+.reihe-titel {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+/* Die Teile einer Kategorie nebeneinander, seitlich wischbar */
+.reihe-teile {
+  display: flex;
+  gap: 10px;
+  margin: 0 calc(-1 * var(--abstand));
+  padding: 4px var(--abstand) 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.reihe-teile::-webkit-scrollbar {
+  display: none;
+}
+
+.mini {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  width: 88px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--mokka);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mini .foto {
+  width: 88px;
+  height: 117px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 3px solid transparent;
+  background: var(--flaeche);
+}
+
+.mini span {
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Gewählt: Rahmen in Mokka und ein Häkchen */
+.mini[aria-pressed="true"] .foto {
+  border-color: var(--mokka);
+}
+
+.mini[aria-pressed="true"]::after {
+  content: "✓";
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--mokka);
+  color: var(--karte);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* Das Outfit: Fotos untereinander */
+.outfit-karte {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.leer-hinweis {
+  margin: 8px 0;
+  text-align: center;
+}
+
+.outfit-teil {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+}
+
+.outfit-teil .foto {
+  max-width: 100%;
+  max-height: 230px;
+  border-radius: 14px;
+  object-fit: contain;
+}
+
+.outfit-teil figcaption {
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Kleiner runder ×-Knopf zum Entfernen */
+.weg-knopf {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--linie);
+  border-radius: 50%;
+  background: var(--karte);
+  color: var(--mokka);
+  font: inherit;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.outfit-teil .weg-knopf {
+  position: absolute;
+  top: -8px;
+  right: -12px;
+  box-shadow: var(--schatten);
+}
+
+/* Ruhige Erfolgsmeldung, z. B. "Gespeichert!" */
+.status {
+  margin: 12px 0 0;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: #E3F1E7;
+  color: #1E5631;
+  font-weight: 700;
+}
+
+.ort-zeile {
+  margin: 10px 0 0;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Knopf, der wie ein Link aussieht */
+.link-knopf {
+  padding: 4px 2px;
+  border: 0;
+  background: none;
+  color: var(--mokka);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* ---------- Ort fürs Wetter ---------- */
+.ort-karte {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.ort-karte p {
+  margin: 0;
+}
+
+.stadt-formular {
+  display: flex;
+  gap: 8px;
+}
+
+.stadt-formular .eingabe {
+  flex: 1;
+  min-width: 0;
+}
+
+.stadt-treffer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stadt-treffer:empty {
+  display: none;
+}
+
+.treffer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px 14px;
+  border: 1.5px solid var(--rand);
+  border-radius: 14px;
+  background: var(--karte);
+  color: var(--mokka);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.treffer span {
+  font-size: 14px;
+}
+
+/* ---------- Zuletzt getragen ---------- */
+.verlauf {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.verlauf-eintrag {
+  padding: 12px 14px;
+  border: 1px solid var(--linie);
+  border-radius: 18px;
+  background: var(--karte);
+}
+
+.verlauf-kopf {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.verlauf-kopf span {
+  flex: 1;
+  font-size: 15px;
+}
+
+.verlauf-bilder {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.verlauf-bilder .foto {
+  width: 54px;
+  height: 72px;
+  flex: none;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.version a {
+  color: inherit;
+}

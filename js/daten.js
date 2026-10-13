@@ -12,6 +12,9 @@ export const KATEGORIEN = [
   { wert: "accessoire", name: "Accessoire" },
 ];
 
+// So stehen die Teile im Outfit untereinander: von oben nach unten
+export const OUTFIT_REIHENFOLGE = ["jacke", "oberteil", "kleid", "hose-rock", "schuhe", "accessoire"];
+
 // Die Temperaturen sind Richtwerte. Der Wettervorschlag (Schritt 1.3) benutzt sie.
 export const WAERME = [
   { wert: "leicht", name: "leicht", hinweis: "ab ca. 20 °C" },

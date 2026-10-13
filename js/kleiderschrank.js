@@ -1,38 +1,68 @@
-// kleiderschrank.js – zeigt alle Kleidungsstücke als Bilder
+// kleiderschrank.js – zeigt alle Kleidungsstücke als Bilder, nach Kategorie filterbar
 
 import { alleTeile } from "./speicher.js";
 import { KATEGORIEN, WAERME, nameVon } from "./daten.js";
+import { bildAdressen, fotoBild } from "./bilder.js";
 
-let bildAdressen = []; // Adressen der angezeigten Bilder (werden beim Neuzeichnen freigegeben)
+const liste = document.getElementById("teile-liste");
+const filterLeiste = document.getElementById("filter-leiste");
+const filterLeer = document.getElementById("filter-leer");
+
+let teile = [];          // alle Teile (neueste zuerst)
+let filter = "alle";     // "alle" oder eine Kategorie, z. B. "schuhe"
+const bilder = bildAdressen();
 
 export async function zeigeKleiderschrank() {
-  const teile = await alleTeile();
+  teile = await alleTeile();
   teile.sort((a, b) => b.erstelltAm.localeCompare(a.erstelltAm)); // neueste zuerst
+  zeichne();
+}
 
-  // Alte Bild-Adressen freigeben, damit der Speicher nicht vollläuft
-  for (const adresse of bildAdressen) URL.revokeObjectURL(adresse);
-  bildAdressen = [];
+function zeichne() {
+  const sichtbar = filter === "alle" ? teile : teile.filter((teil) => teil.kategorie === filter);
 
-  document.getElementById("teile-liste").replaceChildren(...teile.map(baueKachel));
+  bilder.freigeben();
+  liste.replaceChildren(...sichtbar.map(baueKachel));
+  zeichneFilter();
+
   document.getElementById("kleiderschrank-leer").hidden = teile.length > 0;
   document.getElementById("teile-anzahl").textContent =
     teile.length === 1 ? "1 Teil" : teile.length > 1 ? `${teile.length} Teile` : "";
+
+  // Hinweis, wenn in der gewählten Kategorie noch nichts ist
+  filterLeer.hidden = teile.length === 0 || sichtbar.length > 0;
+  filterLeer.textContent = `Noch nichts in „${nameVon(KATEGORIEN, filter)}“. Tippe auf „Neues Teil“, um etwas hinzuzufügen.`;
+}
+
+// Die Filter-Knöpfe: "Alle" und jede Kategorie mit Anzahl
+function zeichneFilter() {
+  filterLeiste.hidden = teile.length === 0;
+  const eintraege = [{ wert: "alle", name: "Alle" }, ...KATEGORIEN];
+  filterLeiste.replaceChildren(...eintraege.map((eintrag) => {
+    const anzahl = eintrag.wert === "alle"
+      ? teile.length
+      : teile.filter((teil) => teil.kategorie === eintrag.wert).length;
+
+    const knopf = document.createElement("button");
+    knopf.type = "button";
+    knopf.className = "filter-chip";
+    knopf.setAttribute("aria-pressed", filter === eintrag.wert);
+    const zahl = document.createElement("small");
+    zahl.textContent = anzahl;
+    knopf.append(eintrag.name, zahl);
+    knopf.addEventListener("click", () => {
+      filter = eintrag.wert;
+      zeichne();
+    });
+    return knopf;
+  }));
 }
 
 // Eine Kachel: Foto, Name und eine kurze Beschreibung. Antippen öffnet das Teil.
 function baueKachel(teil) {
-  const adresse = URL.createObjectURL(teil.vorschau);
-  bildAdressen.push(adresse);
-
   const kachel = document.createElement("a");
   kachel.className = "kachel";
   kachel.href = `#teil/${teil.id}`;
-
-  const bild = document.createElement("img");
-  bild.className = "foto";
-  bild.src = adresse;
-  bild.alt = teil.name;
-  bild.decoding = "async";
 
   const name = document.createElement("span");
   name.className = "kachel-name";
@@ -46,6 +76,6 @@ function baueKachel(teil) {
     teil.regenfest ? "regenfest" : null,
   ].filter(Boolean).join(" · ");
 
-  kachel.append(bild, name, info);
+  kachel.append(fotoBild(bilder.neu(teil.vorschau), teil.name), name, info);
   return kachel;
 }
