@@ -29,7 +29,10 @@
   --karte: #FFFFFF;        /* Weiß für Karten und die Leiste unten */
   --flaeche: #F3EBDD;      /* helles Champagner für zweite Buttons und Markierungen */
   --linie: #EADFCC;        /* feine Linien und Ränder */
+  --rand: #9C8264;         /* Rand von Eingabefeldern (gut sichtbar) */
   --mokka: #5C4033;        /* Text und wichtige Buttons */
+  --regenblau: #4A84C4;    /* Schalter "regenfest" */
+  --rot: #B3261E;          /* Löschen */
 
   --schatten: 0 1px 2px rgb(92 64 51 / 6%), 0 6px 18px rgb(92 64 51 / 7%);
 
@@ -171,16 +174,39 @@ body {
 
 /* ---------- Buttons ---------- */
 .knopf {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   min-height: 48px;          /* groß genug für den Finger */
   padding: 12px 22px;
   border: 0;
   border-radius: 999px;
   font: inherit;
   font-weight: 700;
+  text-align: center;
+  text-decoration: none;
   cursor: pointer;
+}
+
+.knopf svg {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.knopf[disabled] {
+  opacity: 0.6;
+}
+
+.knopf-breit {
+  width: 100%;
 }
 
 .knopf-haupt {               /* wichtige Aktion, z. B. "Speichern" */
@@ -270,4 +296,379 @@ body {
 
 .tableiste a[aria-current="page"] svg {
   background: var(--flaeche);
+}
+
+/* Beim Formular ist die Leiste unten ausgeblendet */
+body.formular-offen .tableiste {
+  display: none;
+}
+
+body.formular-offen .inhalt {
+  padding-bottom: calc(32px + env(safe-area-inset-bottom));
+}
+
+/* ---------- Meldungen (z. B. "Bitte noch ausfüllen") ---------- */
+.meldung {
+  margin: 16px 0 0;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: #FBE3E1;
+  color: #8C1D18;
+  font-weight: 700;
+}
+
+/* ---------- Kleiderschrank ---------- */
+.titel-zeile {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.anzahl {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.titel-zeile + .knopf-breit {
+  margin-bottom: 18px;
+}
+
+.teile-liste {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 18px 14px;
+}
+
+.kachel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.kachel .foto {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 18px;
+  background: var(--flaeche);
+  box-shadow: var(--schatten);
+}
+
+.kachel-name {
+  margin-top: 8px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kachel-info {
+  font-size: 13px;
+}
+
+/* Kleidungsfotos: NIE Filter, Überlagerungen oder Farbänderungen! */
+.foto {
+  filter: none;
+  mix-blend-mode: normal;
+  opacity: 1;
+}
+
+/* ---------- Formular ---------- */
+.zurueck {
+  display: inline-block;
+  margin-top: 14px;
+  color: inherit;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.formular {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.feld {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.feld-titel {
+  padding: 0;
+  margin-bottom: 8px;
+  font-weight: 800;
+}
+
+label.feld .feld-titel {
+  margin-bottom: 0;
+}
+
+.feld-titel small,
+.schalter small {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Textfeld: mindestens 16px Schrift, sonst zoomt das iPhone beim Antippen hinein */
+.eingabe {
+  width: 100%;
+  min-height: 50px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--rand);
+  border-radius: 14px;
+  background: var(--karte);
+  color: var(--mokka);
+  font: inherit;
+  font-size: 17px;
+}
+
+.eingabe::placeholder {
+  color: #7E6A5C;
+}
+
+.eingabe:focus {
+  outline: 3px solid var(--mokka);
+  outline-offset: 1px;
+}
+
+/* Foto-Bereich */
+/* Ohne Foto ist der Rahmen flach, damit die Foto-Knöpfe gleich zu sehen sind */
+.foto-rahmen {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+  border-radius: 18px;
+  background: var(--flaeche);
+}
+
+/* Mit Foto: Hochformat wie ein Handyfoto */
+.foto-rahmen.hat-foto {
+  height: auto;
+  aspect-ratio: 3 / 4;
+  max-height: 55vh;
+}
+
+.foto-rahmen img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* das ganze Foto zeigen, nichts abschneiden */
+}
+
+.foto-platzhalter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.foto-platzhalter svg {
+  width: 52px;
+  height: 52px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.foto-knoepfe {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.foto-knoepfe .knopf {
+  gap: 6px;
+  padding-inline: 8px;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.tipp {
+  margin: 14px 0 0;
+  font-size: 14.5px;
+}
+
+/* Versteckt, aber noch antippbar (für die Foto-Auswahl im Button) */
+.unsichtbar {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+/* Auswahl-Knöpfe ("Chips") */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  position: relative;
+  display: flex;
+}
+
+/* Das eigentliche Auswahlfeld liegt unsichtbar über dem ganzen Chip */
+.chip input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.chip > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1.5px solid var(--rand);
+  border-radius: 999px;
+  background: var(--karte);
+  font-weight: 600;
+}
+
+.chip input:checked + span {
+  border-color: var(--mokka);
+  background: var(--mokka);
+  color: var(--karte);
+}
+
+.chip input:focus-visible + span {
+  outline: 3px solid var(--mokka);
+  outline-offset: 2px;
+}
+
+.farbpunkt {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--farbe);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 20%);
+}
+
+.chip input:checked + span .farbpunkt {
+  box-shadow: 0 0 0 2px var(--karte);
+}
+
+/* Wärme: drei gleich breite Knöpfe nebeneinander */
+.segment {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.segment .chip > span {
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+  padding: 8px 4px;
+  border-radius: 16px;
+  text-align: center;
+  font-weight: 800;
+}
+
+.segment small {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+/* Schalter für "regenfest" */
+.schalter {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 56px;
+  padding: 10px 16px;
+  border: 1.5px solid var(--rand);
+  border-radius: 16px;
+  background: var(--karte);
+  font-weight: 800;
+}
+
+.schalter small {
+  display: block;
+}
+
+.schalter input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.schalter-bahn {
+  position: relative;
+  width: 52px;
+  height: 32px;
+  flex: none;
+  border-radius: 999px;
+  background: #CFC2B2;
+  transition: background 0.2s;
+}
+
+.schalter-bahn::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 25%);
+  transition: transform 0.2s;
+}
+
+.schalter input:checked ~ .schalter-bahn {
+  background: var(--regenblau);
+}
+
+.schalter input:checked ~ .schalter-bahn::after {
+  transform: translateX(20px);
+}
+
+.schalter input:focus-visible ~ .schalter-bahn {
+  outline: 3px solid var(--mokka);
+  outline-offset: 2px;
+}
+
+/* Knöpfe unten im Formular */
+.formular .meldung {
+  margin: 0;
+}
+
+.formular-knoepfe {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.knopf-loeschen {
+  width: 100%;
+  border: 1.5px solid #E7B3AE;
+  background: transparent;
+  color: var(--rot);
 }

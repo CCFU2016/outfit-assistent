@@ -1,32 +1,50 @@
 // app.js – startet die App
 // Hier steht, was passiert, wenn die App geöffnet wird:
-// 1. den richtigen Bereich zeigen (Kleiderschrank, Outfit oder Wetter)
+// 1. die richtige Seite zeigen (Kleiderschrank, Outfit, Wetter oder das Formular)
 // 2. auf dem Handy einen Tipp zum Installieren zeigen
 // 3. den Service Worker anmelden (damit die App auch ohne Internet startet)
 
-const VERSION = "0.2 (Grundgerüst, hellere Farben)";
+import { zeigeKleiderschrank } from "./kleiderschrank.js";
+import { zeigeFormular } from "./teil-formular.js";
 
-const BEREICHE = ["kleiderschrank", "outfit", "wetter"];
+const VERSION = "0.3 (Kleidungsstück erfassen)";
 
-// ---------- 1. Zwischen den Bereichen wechseln ----------
-// Welcher Bereich offen ist, steht hinten in der Adresse, z. B. ...#outfit
-function zeigeBereich() {
-  const gewuenscht = location.hash.slice(1); // "#outfit" → "outfit"
-  const offen = BEREICHE.includes(gewuenscht) ? gewuenscht : "kleiderschrank";
+const TABS = ["kleiderschrank", "outfit", "wetter"];
 
-  for (const name of BEREICHE) {
-    // Nur der offene Bereich ist sichtbar
-    document.getElementById(name).hidden = name !== offen;
+// ---------- 1. Die richtige Seite zeigen ----------
+// Welche Seite offen ist, steht hinten in der Adresse:
+//   #kleiderschrank, #outfit, #wetter  → die drei Bereiche der Leiste unten
+//   #neues-teil                         → leeres Formular
+//   #teil/3f2a…                         → Formular mit dem Teil, das diese Nummer hat
+async function zeigeSeite() {
+  const ziel = decodeURIComponent(location.hash.slice(1)); // "#outfit" → "outfit"
+  const istFormular = ziel === "neues-teil" || ziel.startsWith("teil/");
+  const bereich = istFormular ? "formular" : TABS.includes(ziel) ? ziel : "kleiderschrank";
+  const tab = istFormular ? "kleiderschrank" : bereich;
 
-    // Den passenden Eintrag in der Leiste unten hervorheben
-    const eintrag = document.querySelector(`[data-bereich="${name}"]`);
-    if (name === offen) {
-      eintrag.setAttribute("aria-current", "page");
-    } else {
-      eintrag.removeAttribute("aria-current");
-    }
+  // Nur der passende Bereich ist sichtbar
+  for (const abschnitt of document.querySelectorAll(".bereich")) {
+    abschnitt.hidden = abschnitt.id !== bereich;
   }
+  // Den passenden Eintrag in der Leiste unten hervorheben
+  for (const eintrag of document.querySelectorAll(".tableiste a")) {
+    if (eintrag.dataset.bereich === tab) eintrag.setAttribute("aria-current", "page");
+    else eintrag.removeAttribute("aria-current");
+  }
+  // Beim Formular blenden wir die Leiste unten aus
+  document.body.classList.toggle("formular-offen", istFormular);
   window.scrollTo(0, 0);
+
+  try {
+    if (bereich === "kleiderschrank") await zeigeKleiderschrank();
+    if (istFormular) await zeigeFormular(ziel.startsWith("teil/") ? ziel.slice(5) : null);
+    document.getElementById("app-fehler").hidden = true;
+  } catch (fehler) {
+    console.error(fehler);
+    const anzeige = document.getElementById("app-fehler");
+    anzeige.textContent = `Hoppla, da ist etwas schiefgegangen: ${fehler.message}`;
+    anzeige.hidden = false;
+  }
 }
 
 // ---------- 2. Tipp zum Installieren ----------
@@ -40,8 +58,8 @@ function zeigeInstallierTipp() {
 
   const geraet = navigator.userAgent;
   const istAndroid = /Android/.test(geraet);
-  // iPads geben sich als Mac aus, haben aber einen Touchscreen
-  const istApple = !istAndroid && (/iPhone|iPad|iPod/.test(geraet) ||
+  // iPads geben sich manchmal als Mac aus, haben aber einen Touchscreen
+  const istApple = !istAndroid && (/iPhone|iPad|iPod/.test(geraet + navigator.platform) ||
     (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1));
 
   let text;
@@ -49,8 +67,8 @@ function zeigeInstallierTipp() {
     text = "Tippe in Chrome oben rechts auf ⋮ und dann auf „App installieren“ " +
       "oder „Zum Startbildschirm hinzufügen“.";
   } else if (istApple) {
-    text = "Öffne die Seite in Safari, tippe auf das Teilen-Symbol (Quadrat mit Pfeil nach oben, " +
-      "bei neueren iPhones zuerst auf „•••“) und dann auf „Zum Home-Bildschirm“. " +
+    text = "Tippe in Safari auf „Teilen“ (Quadrat mit Pfeil nach oben; je nach iPhone steckt es " +
+      "hinter „•••“ oder „≡“ neben der Adresse) und dann auf „Zum Home-Bildschirm“. " +
       "Trag deine Kleidung erst danach ein, in der App auf dem Startbildschirm: " +
       "Safari und die App haben getrennte Speicher.";
   } else {
@@ -76,7 +94,7 @@ function meldeServiceWorkerAn() {
 
 // ---------- Los geht's ----------
 document.getElementById("version").textContent = VERSION;
-window.addEventListener("hashchange", zeigeBereich);
-zeigeBereich();
+window.addEventListener("hashchange", zeigeSeite);
+zeigeSeite();
 zeigeInstallierTipp();
 meldeServiceWorkerAn();

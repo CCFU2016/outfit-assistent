@@ -2,7 +2,7 @@
 // Er läuft im Hintergrund und legt die App-Dateien auf dem Gerät ab.
 // So startet die App schnell und funktioniert auch ohne Internet.
 
-const SPEICHER_NAME = "outfit-assistent-v1";
+const SPEICHER_NAME = "outfit-assistent-v2";
 
 // Diese Dateien braucht die App zum Starten
 const APP_DATEIEN = [
@@ -10,6 +10,11 @@ const APP_DATEIEN = [
   "index.html",
   "css/style.css",
   "js/app.js",
+  "js/daten.js",
+  "js/speicher.js",
+  "js/fotos.js",
+  "js/kleiderschrank.js",
+  "js/teil-formular.js",
   "manifest.webmanifest",
   "fonts/lobster-two-700-italic.woff2",
   "fonts/nunito-variabel.woff2",
