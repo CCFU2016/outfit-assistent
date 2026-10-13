@@ -25,10 +25,13 @@
 
 /* ---------- App-Farben: hier an einer Stelle festgelegt ---------- */
 :root {
-  --champagner: #F7F1E6;   /* Hintergrund */
-  --beige: #E6D7BF;        /* Karten, Flächen, zweite Buttons */
-  --beige-dunkel: #D9C5A5; /* feine Linien und Ränder */
+  --hintergrund: #FCF9F3;  /* Champagner-Weiß, sehr hell */
+  --karte: #FFFFFF;        /* Weiß für Karten und die Leiste unten */
+  --flaeche: #F3EBDD;      /* helles Champagner für zweite Buttons und Markierungen */
+  --linie: #EADFCC;        /* feine Linien und Ränder */
   --mokka: #5C4033;        /* Text und wichtige Buttons */
+
+  --schatten: 0 1px 2px rgb(92 64 51 / 6%), 0 6px 18px rgb(92 64 51 / 7%);
 
   --schrift-schwung: "Lobster Two", "Snell Roundhand", cursive;
   --schrift-text: "Nunito", system-ui, sans-serif;
@@ -59,7 +62,7 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--champagner);
+  background: var(--hintergrund);
   color: var(--mokka);
   font-family: var(--schrift-text);
   font-size: 17px;
@@ -119,11 +122,13 @@ body {
   line-height: 1.2;
 }
 
-/* Karte: beige Fläche mit runden Ecken */
+/* Karte: weiße Fläche mit runden Ecken und zartem Schatten */
 .karte {
-  background: var(--beige);
+  background: var(--karte);
+  border: 1px solid var(--linie);
   border-radius: 22px;
   padding: 20px;
+  box-shadow: var(--schatten);
 }
 
 .klein {
@@ -141,7 +146,7 @@ body {
   height: 72px;
   padding: 14px;
   border-radius: 50%;
-  background: var(--champagner);
+  background: var(--flaeche);
   fill: none;
   stroke: currentColor;
   stroke-width: 1.6;
@@ -180,11 +185,11 @@ body {
 
 .knopf-haupt {               /* wichtige Aktion, z. B. "Speichern" */
   background: var(--mokka);
-  color: var(--champagner);
+  color: var(--karte);
 }
 
 .knopf-zweit {               /* weniger wichtige Aktion */
-  background: var(--champagner);
+  background: var(--flaeche);
   color: var(--mokka);
 }
 
@@ -225,8 +230,8 @@ body {
   justify-content: center;
   gap: 4px;
   padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
-  background: var(--champagner);
-  border-top: 1px solid var(--beige-dunkel);
+  background: var(--karte);
+  border-top: 1px solid var(--linie);
 }
 
 .tableiste a {
@@ -244,6 +249,8 @@ body {
   font-weight: 600;
 }
 
+/* Symbole: Linien in Mokka. Wetter und Shirt haben ihre eigenen Farben
+   direkt im Symbol (siehe index.html). */
 .tableiste svg {
   width: 56px;
   height: 32px;
@@ -256,18 +263,11 @@ body {
   stroke-linejoin: round;
 }
 
-/* Der gerade geöffnete Bereich bekommt eine beige Fläche hinter dem Symbol */
+/* Der gerade geöffnete Bereich bekommt eine helle Fläche hinter dem Symbol */
 .tableiste a[aria-current="page"] {
   font-weight: 800;
 }
 
 .tableiste a[aria-current="page"] svg {
-  background: var(--beige);
-  --wolke-fuellung: var(--beige);
-}
-
-/* Die Wolke im Wetter-Symbol verdeckt die Sonne:
-   Sie wird mit der Farbe gefüllt, die hinter dem Symbol liegt */
-.wolke {
-  fill: var(--wolke-fuellung, var(--champagner));
+  background: var(--flaeche);
 }

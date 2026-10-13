@@ -4,7 +4,7 @@
 // 2. auf dem Handy einen Tipp zum Installieren zeigen
 // 3. den Service Worker anmelden (damit die App auch ohne Internet startet)
 
-const VERSION = "0.1 (Grundgerüst)";
+const VERSION = "0.2 (Grundgerüst, hellere Farben)";
 
 const BEREICHE = ["kleiderschrank", "outfit", "wetter"];
 
