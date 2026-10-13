@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <!-- Handy-Ansicht: volle Breite, kein Herauszoomen, Platz bis an den Bildschirmrand -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Outfit-Assistent</title>
+  <meta name="description" content="Dein digitaler Kleiderschrank: Kleidung fotografieren, Outfits zusammenstellen und Vorschläge passend zum Wetter bekommen.">
+
+  <!-- Steckbrief der App (Name, Icon, Farben) für den Startbildschirm -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#F7F1E6">
+  <!-- Die App ist immer hell, auch wenn das Handy im Dunkelmodus ist -->
+  <meta name="color-scheme" content="light">
+
+  <!-- Extra-Angaben, die nur das iPhone und das iPad brauchen -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Outfits">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="icon" href="icons/icon-192.png" type="image/png" sizes="192x192">
+
+  <!-- Die Schriften liegen in der App selbst (Ordner fonts), nicht bei Google -->
+  <link rel="preload" href="fonts/lobster-two-700-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/nunito-variabel.woff2" as="font" type="font/woff2" crossorigin>
+
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <!-- Symbole: einmal hier gezeichnet, unten mehrfach benutzt (mit <use>) -->
+  <svg class="symbole" aria-hidden="true">
+    <symbol id="symbol-buegel" viewBox="0 0 24 24">
+      <path d="M12 10V9c0-.9.7-1.3 1.3-1.7a2.3 2.3 0 1 0-3.5-2"/>
+      <path d="M12 10 3.7 15.4c-.9.6-.5 2.1.6 2.1h15.4c1.1 0 1.5-1.5.6-2.1Z"/>
+    </symbol>
+    <symbol id="symbol-shirt" viewBox="0 0 24 24">
+      <path d="M9 4 4.5 6.5l1.7 3.6 1.8-.8V20h8V9.3l1.8.8 1.7-3.6L15 4c-.4 1.3-1.6 2.2-3 2.2S9.4 5.3 9 4Z"/>
+    </symbol>
+    <symbol id="symbol-wetter" viewBox="0 0 24 24">
+      <circle cx="8" cy="8" r="3"/>
+      <path d="M8 2.2v1.3M2.2 8h1.3M3.9 3.9l.9.9M12.1 3.9l-.9.9M3.9 12.1l.9-.9"/>
+      <path class="wolke" d="M10 20h7.5a3.5 3.5 0 0 0 .4-7 5 5 0 0 0-9.6 1.6A2.7 2.7 0 0 0 10 20Z"/>
+    </symbol>
+  </svg>
+
+  <header class="kopf">
+    <h1 class="app-name">Outfit-Assistent</h1>
+    <p class="untertitel">dein digitaler Kleiderschrank</p>
+  </header>
+
+  <!-- Tipp zum Installieren: erscheint nur im Browser, nicht in der App auf dem Startbildschirm -->
+  <aside id="installieren" class="karte hinweis" hidden>
+    <h2 class="hinweis-titel">Tipp: Leg die App auf deinen Startbildschirm</h2>
+    <p id="installieren-text"></p>
+    <button id="installieren-spaeter" class="knopf knopf-zweit" type="button">Später</button>
+  </aside>
+
+  <main class="inhalt">
+    <!-- Bereich 1: Kleiderschrank -->
+    <section id="kleiderschrank" class="bereich" aria-labelledby="titel-kleiderschrank">
+      <h2 id="titel-kleiderschrank" class="bereich-titel">Dein Kleiderschrank</h2>
+      <div class="karte leer">
+        <svg class="leer-symbol" aria-hidden="true"><use href="#symbol-buegel"/></svg>
+        <p class="leer-text">Noch ist dein Kleiderschrank leer.</p>
+        <p class="klein">Im nächsten Schritt kannst du hier deine Kleidung fotografieren.</p>
+      </div>
+    </section>
+
+    <!-- Bereich 2: Outfit zusammenstellen -->
+    <section id="outfit" class="bereich" aria-labelledby="titel-outfit" hidden>
+      <h2 id="titel-outfit" class="bereich-titel">Outfit zusammenstellen</h2>
+      <div class="karte leer">
+        <svg class="leer-symbol" aria-hidden="true"><use href="#symbol-shirt"/></svg>
+        <p class="leer-text">Hier stellst du bald Outfits aus deinen eigenen Teilen zusammen.</p>
+        <p class="klein">Mit „Heute getragen“ merkt sich die App, was du bei welchem Wetter anhattest.</p>
+      </div>
+    </section>
+
+    <!-- Bereich 3: Wettervorschlag -->
+    <section id="wetter" class="bereich" aria-labelledby="titel-wetter" hidden>
+      <h2 id="titel-wetter" class="bereich-titel">Vorschlag für morgen</h2>
+      <div class="karte leer">
+        <svg class="leer-symbol" aria-hidden="true"><use href="#symbol-wetter"/></svg>
+        <p class="leer-text">Hier bekommst du bald einen Outfit-Vorschlag, der zum Wetter von morgen passt.</p>
+        <p class="klein">Dafür fragt die App nach deinem Standort oder deiner Stadt.</p>
+      </div>
+    </section>
+
+    <p class="version">Version <span id="version"></span></p>
+  </main>
+
+  <!-- Leiste unten: wechselt zwischen den drei Bereichen -->
+  <nav class="tableiste" aria-label="Bereiche">
+    <a href="#kleiderschrank" data-bereich="kleiderschrank">
+      <svg aria-hidden="true"><use href="#symbol-buegel"/></svg>
+      <span>Kleiderschrank</span>
+    </a>
+    <a href="#outfit" data-bereich="outfit">
+      <svg aria-hidden="true"><use href="#symbol-shirt"/></svg>
+      <span>Outfit</span>
+    </a>
+    <a href="#wetter" data-bereich="wetter">
+      <svg aria-hidden="true"><use href="#symbol-wetter"/></svg>
+      <span>Wetter</span>
+    </a>
+  </nav>
+</body>
+</html>
