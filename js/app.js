@@ -7,8 +7,9 @@
 import { zeigeKleiderschrank } from "./kleiderschrank.js";
 import { zeigeFormular } from "./teil-formular.js";
 import { zeigeOutfit } from "./outfit.js";
+import { zeigeWetter } from "./wetter-seite.js";
 
-const VERSION = "0.6 (Champagner und Dunkelgrau)";
+const VERSION = "0.7 (Wetter und Vorschläge)";
 
 const TABS = ["kleiderschrank", "outfit", "wetter"];
 
@@ -39,6 +40,7 @@ async function zeigeSeite() {
   try {
     if (bereich === "kleiderschrank") await zeigeKleiderschrank();
     if (bereich === "outfit") await zeigeOutfit();
+    if (bereich === "wetter") await zeigeWetter();
     if (istFormular) await zeigeFormular(ziel.startsWith("teil/") ? ziel.slice(5) : null);
     document.getElementById("app-fehler").hidden = true;
   } catch (fehler) {

@@ -1,13 +1,14 @@
 // ort-auswahl.js – eine Karte, in der man den Ort fürs Wetter festlegt:
 // entweder „Standort verwenden“ oder eine Stadt eintippen.
-// Wird im Outfit-Bereich benutzt (und in Schritt 1.3 auch im Wetter-Bereich).
+// Wird im Outfit-Bereich und im Wetter-Bereich benutzt.
 
 import { gespeicherterOrt, ortSpeichern, standortAbfragen, stadtSuchen } from "./wetter.js";
 
 // Den Ort fürs Wetter bestimmen:
 // 1. gespeicherter Ort, sonst 2. Standort des Handys, sonst 3. Stadt eintippen lassen.
 // Ergebnis: der Ort, oder null, wenn man ohne Wetter weitermachen möchte.
-export async function ortBestimmen(behaelter) {
+// zweiterKnopf: Text für den Knopf, der ohne Ort weitermacht.
+export async function ortBestimmen(behaelter, zweiterKnopf = "Ohne Wetter speichern") {
   const gespeichert = await gespeicherterOrt();
   if (gespeichert) return gespeichert;
   try {
@@ -15,7 +16,7 @@ export async function ortBestimmen(behaelter) {
     await ortSpeichern(ort);
     return ort;
   } catch {
-    return ortAuswaehlen(behaelter, "Ohne Wetter speichern");
+    return ortAuswaehlen(behaelter, zweiterKnopf);
   }
 }
 

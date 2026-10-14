@@ -62,33 +62,41 @@ export async function stadtSuchen(text) {
 }
 
 // ---------- Wetter ----------
-// Holt das Wetter für heute und morgen: { heute: {…}, morgen: {…} }
-export async function wetterHolen(ort) {
+// Holt das Wetter für mehrere Tage (heute zuerst). Jeder Tag sieht so aus:
+// { datum: "2026-10-14", tempMax: 14, tempMin: 7, regen: true, regenMm: 3.2, regenProzent: 80, code: 61, ort: "Berlin" }
+// "code" sagt, wie der Himmel aussieht (0 = klar, 1–2 = leicht bewölkt, ab 3 = bewölkt …).
+export async function wetterTage(ort, anzahl) {
   const parameter = new URLSearchParams({
     latitude: ort.breite,
     longitude: ort.laenge,
-    daily: "temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max",
+    daily: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max",
     timezone: "auto",
-    forecast_days: "2",
+    forecast_days: String(anzahl),
   });
   const antwort = await fetch(`${WETTER_ADRESSE}?${parameter}`);
   if (!antwort.ok) throw new Error("Der Wetterdienst ist gerade nicht erreichbar.");
   const tage = (await antwort.json()).daily;
 
-  function tag(nummer) {
+  return tage.time.map((datum, nummer) => {
     const regenMm = tage.precipitation_sum[nummer] ?? 0;
     const regenProzent = tage.precipitation_probability_max[nummer] ?? 0;
     return {
-      datum: tage.time[nummer],
+      datum,
       tempMax: Math.round(tage.temperature_2m_max[nummer]),
       tempMin: Math.round(tage.temperature_2m_min[nummer]),
       regen: regenMm >= REGEN_AB_MM || regenProzent >= REGEN_AB_PROZENT,
       regenMm,
       regenProzent,
+      code: tage.weather_code?.[nummer] ?? null,
       ort: ort.name,
     };
-  }
-  return { heute: tag(0), morgen: tag(1) };
+  });
+}
+
+// Wetter für heute und morgen: { heute: {…}, morgen: {…} }
+export async function wetterHolen(ort) {
+  const [heute, morgen] = await wetterTage(ort, 2);
+  return { heute, morgen };
 }
 
 // Kurzer Text, z. B. "14 °C, Regen"

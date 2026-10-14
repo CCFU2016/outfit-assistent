@@ -938,6 +938,116 @@ label.feld .feld-titel {
   font-size: 14px;
 }
 
+/* ---------- Wetter und Vorschläge ---------- */
+/* Die Tage nebeneinander, seitlich wischbar */
+.tage-leiste {
+  display: flex;
+  gap: 8px;
+  margin: 0 calc(-1 * var(--abstand)) 16px;
+  padding: 2px var(--abstand) 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tage-leiste::-webkit-scrollbar {
+  display: none;
+}
+
+.tag-knopf {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 0 64px;
+  gap: 2px;
+  padding: 10px 6px;
+  border: 1.5px solid var(--linie);
+  border-radius: 16px;
+  background: var(--karte);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.tag-knopf b {
+  font-size: 14px;
+}
+
+.tag-symbol {
+  width: 32px;
+  height: 32px;
+  margin: 2px 0;
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tag-temp {
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.tag-knopf small {
+  font-size: 13px;
+}
+
+.tag-knopf[aria-pressed="true"] {
+  border-color: var(--akzent);
+  background: var(--akzent);
+}
+
+.vorschlag-karte {
+  margin-top: 4px;
+}
+
+.vorschlag-titel {
+  margin: 0;
+  font-family: var(--schrift-schwung);
+  font-size: 24px;
+  font-style: italic;
+  font-weight: 700;
+}
+
+.vorschlag-wetter {
+  margin: 2px 0 14px;
+  font-weight: 700;
+}
+
+.vorschlag-fotos {
+  margin-bottom: 8px;
+}
+
+/* Etwas kleiner als im Outfit, damit der ganze Vorschlag gut auf den Bildschirm passt */
+.vorschlag-fotos .foto {
+  max-height: 170px;
+}
+
+#wetter .leer .knopf {
+  margin-top: 12px;
+}
+
+.gruende {
+  margin: 0 0 10px;
+  padding-left: 20px;
+}
+
+.gruende li {
+  margin-bottom: 4px;
+}
+
+/* Freundlicher Hinweis, was im Kleiderschrank noch fehlt */
+.vorschlag-hinweis {
+  margin: 0 0 10px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--flaeche);
+  font-size: 15px;
+}
+
+.vorschlag-karte .knopf-breit {
+  margin-top: 6px;
+}
+
 /* ---------- Zuletzt getragen ---------- */
 .verlauf {
   display: flex;

@@ -46,6 +46,18 @@
       <path stroke="#E0A100" d="M8 2.2v1.3M2.2 8h1.3M3.9 3.9l.9.9M12.1 3.9l-.9.9M3.9 12.1l.9-.9"/>
       <path fill="#DDEBFA" stroke="#4A84C4" d="M10 20h7.5a3.5 3.5 0 0 0 .4-7 5 5 0 0 0-9.6 1.6A2.7 2.7 0 0 0 10 20Z"/>
     </symbol>
+    <!-- Fürs Wetter der einzelnen Tage: Sonne, Wolke, Wolke mit Regen -->
+    <symbol id="symbol-sonne" viewBox="0 0 24 24">
+      <circle fill="#FFD54F" stroke="#E0A100" cx="12" cy="12" r="4.2"/>
+      <path stroke="#E0A100" d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/>
+    </symbol>
+    <symbol id="symbol-wolke" viewBox="0 0 24 24">
+      <path fill="#DDEBFA" stroke="#4A84C4" d="M7.5 18h10a4 4 0 0 0 .5-8 5.5 5.5 0 0 0-10.6 1.8A3.1 3.1 0 0 0 7.5 18Z"/>
+    </symbol>
+    <symbol id="symbol-regen" viewBox="0 0 24 24">
+      <path fill="#DDEBFA" stroke="#4A84C4" d="M7.5 14.5h10a4 4 0 0 0 .5-8 5.5 5.5 0 0 0-10.6 1.8 3.1 3.1 0 0 0 .1 6.2Z"/>
+      <path stroke="#4A84C4" d="m9 17.5-1 2.5M13 17.5l-1 2.5M17 17.5l-1 2.5"/>
+    </symbol>
     <symbol id="symbol-kamera" viewBox="0 0 24 24">
       <path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.2-2h6.6l1.2 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5Z"/>
       <circle cx="12" cy="12.5" r="3.5"/>
@@ -197,14 +209,13 @@
       <div id="getragen-liste" class="verlauf"></div>
     </section>
 
-    <!-- Bereich 3: Wettervorschlag -->
+    <!-- Bereich 3: Wetter und Vorschläge für die nächsten Tage (wird von wetter-seite.js gefüllt) -->
     <section id="wetter" class="bereich" aria-labelledby="titel-wetter" hidden>
-      <h2 id="titel-wetter" class="bereich-titel">Vorschlag für morgen</h2>
-      <div class="karte leer">
-        <svg class="leer-symbol" aria-hidden="true"><use href="#symbol-wetter"/></svg>
-        <p class="leer-text">Hier bekommst du bald einen Outfit-Vorschlag, der zum Wetter von morgen passt.</p>
-        <p class="klein">Dafür fragt die App nach deinem Standort oder deiner Stadt.</p>
-      </div>
+      <h2 id="titel-wetter" class="bereich-titel">Wetter &amp; Vorschläge</h2>
+      <!-- Hier erscheint bei Bedarf die Ort-Auswahl -->
+      <div id="wetter-ort" hidden></div>
+      <div id="wetter-inhalt"></div>
+      <p id="wetter-ort-zeile" class="ort-zeile"></p>
     </section>
 
     <p class="version">Version <span id="version"></span> · Wetterdaten: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a></p>

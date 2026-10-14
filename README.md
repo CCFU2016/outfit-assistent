@@ -51,8 +51,8 @@ schon auf deinem Handy angekommen ist.
 
 - [x] 1.0 Grundgerüst: Design, drei Bereiche, installierbar
 - [x] 1.1 Kleidungsstück erfassen: Foto, Angaben, bearbeiten, löschen
-- [ ] 1.2 Kleiderschrank und Outfit
-- [ ] 1.3 Wettervorschlag
+- [x] 1.2 Kleiderschrank und Outfit
+- [x] 1.3 Wetter und Vorschläge für heute und die nächsten 4 Tage
 - [ ] 1.4 Sicherung speichern und laden
 
 ## Lizenzen
