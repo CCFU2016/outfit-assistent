@@ -1,5 +1,5 @@
 /* ==========================================================
-   Outfit-Assistent – Aussehen der App
+   My digital wardrobe – Aussehen der App
    ========================================================== */
 
 /* ---------- Schriften (liegen im Ordner fonts, kein Google) ---------- */
@@ -29,12 +29,13 @@
   --karte: #FFFFFF;        /* Weiß für Karten und die Leiste unten */
   --flaeche: #F3EBDD;      /* helles Champagner für zweite Buttons und Markierungen */
   --linie: #EADFCC;        /* feine Linien und Ränder */
-  --rand: #9C8264;         /* Rand von Eingabefeldern (gut sichtbar) */
-  --mokka: #5C4033;        /* Text und wichtige Buttons */
+  --rand: #8F877F;         /* Rand von Eingabefeldern (warmes Grau, gut sichtbar) */
+  --text: #3D3833;         /* Dunkelgrau: Text, Ränder von Gewähltem */
+  --akzent: #E3CDA4;       /* Champagner: wichtige Buttons (Schrift darauf dunkel) */
   --regenblau: #4A84C4;    /* Schalter "regenfest" */
   --rot: #B3261E;          /* Löschen */
 
-  --schatten: 0 1px 2px rgb(92 64 51 / 6%), 0 6px 18px rgb(92 64 51 / 7%);
+  --schatten: 0 1px 2px rgb(61 56 51 / 6%), 0 6px 18px rgb(61 56 51 / 7%);
 
   --schrift-schwung: "Lobster Two", "Snell Roundhand", cursive;
   --schrift-text: "Nunito", system-ui, sans-serif;
@@ -66,7 +67,7 @@ body {
   margin: 0;
   min-height: 100vh;
   background: var(--hintergrund);
-  color: var(--mokka);
+  color: var(--text);
   font-family: var(--schrift-text);
   font-size: 17px;
   line-height: 1.5;
@@ -80,7 +81,7 @@ body {
 
 /* Gut sichtbarer Rahmen, wenn man mit der Tastatur navigiert */
 :focus-visible {
-  outline: 3px solid var(--mokka);
+  outline: 3px solid var(--text);
   outline-offset: 3px;
 }
 
@@ -210,13 +211,13 @@ body {
 }
 
 .knopf-haupt {               /* wichtige Aktion, z. B. "Speichern" */
-  background: var(--mokka);
-  color: var(--karte);
+  background: var(--akzent);
+  color: var(--text);
 }
 
 .knopf-zweit {               /* weniger wichtige Aktion */
   background: var(--flaeche);
-  color: var(--mokka);
+  color: var(--text);
 }
 
 .knopf:active {
@@ -269,13 +270,13 @@ body {
   align-items: center;
   justify-content: center;
   gap: 2px;
-  color: var(--mokka);
+  color: var(--text);
   text-decoration: none;
   font-size: 13px;
   font-weight: 600;
 }
 
-/* Symbole: Linien in Mokka. Wetter und Shirt haben ihre eigenen Farben
+/* Symbole: Linien in Dunkelgrau. Wetter und Shirt haben ihre eigenen Farben
    direkt im Symbol (siehe index.html). */
 .tableiste svg {
   width: 56px;
@@ -425,17 +426,17 @@ label.feld .feld-titel {
   border: 1.5px solid var(--rand);
   border-radius: 14px;
   background: var(--karte);
-  color: var(--mokka);
+  color: var(--text);
   font: inherit;
   font-size: 17px;
 }
 
 .eingabe::placeholder {
-  color: #7E6A5C;
+  color: #736B64;
 }
 
 .eingabe:focus {
-  outline: 3px solid var(--mokka);
+  outline: 3px solid var(--text);
   outline-offset: 1px;
 }
 
@@ -547,13 +548,13 @@ label.feld .feld-titel {
 }
 
 .chip input:checked + span {
-  border-color: var(--mokka);
-  background: var(--mokka);
-  color: var(--karte);
+  border-color: var(--akzent);
+  background: var(--akzent);
+  color: var(--text);
 }
 
 .chip input:focus-visible + span {
-  outline: 3px solid var(--mokka);
+  outline: 3px solid var(--text);
   outline-offset: 2px;
 }
 
@@ -625,7 +626,7 @@ label.feld .feld-titel {
   height: 32px;
   flex: none;
   border-radius: 999px;
-  background: #CFC2B2;
+  background: #D3CCC4;
   transition: background 0.2s;
 }
 
@@ -651,7 +652,7 @@ label.feld .feld-titel {
 }
 
 .schalter input:focus-visible ~ .schalter-bahn {
-  outline: 3px solid var(--mokka);
+  outline: 3px solid var(--text);
   outline-offset: 2px;
 }
 
@@ -698,7 +699,7 @@ label.feld .feld-titel {
   border: 1.5px solid var(--rand);
   border-radius: 999px;
   background: var(--karte);
-  color: var(--mokka);
+  color: var(--text);
   font: inherit;
   font-size: 15px;
   font-weight: 700;
@@ -711,9 +712,9 @@ label.feld .feld-titel {
 }
 
 .filter-chip[aria-pressed="true"] {
-  border-color: var(--mokka);
-  background: var(--mokka);
-  color: var(--karte);
+  border-color: var(--akzent);
+  background: var(--akzent);
+  color: var(--text);
 }
 
 /* ---------- Outfit zusammenstellen ---------- */
@@ -754,7 +755,7 @@ label.feld .feld-titel {
   padding: 0;
   border: 0;
   background: none;
-  color: var(--mokka);
+  color: var(--text);
   font: inherit;
   font-size: 13px;
   font-weight: 600;
@@ -778,9 +779,9 @@ label.feld .feld-titel {
   text-overflow: ellipsis;
 }
 
-/* Gewählt: Rahmen in Mokka und ein Häkchen */
+/* Gewählt: dunkler Rahmen und ein Häkchen */
 .mini[aria-pressed="true"] .foto {
-  border-color: var(--mokka);
+  border-color: var(--text);
 }
 
 .mini[aria-pressed="true"]::after {
@@ -793,7 +794,7 @@ label.feld .feld-titel {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: var(--mokka);
+  background: var(--text);
   color: var(--karte);
   font-size: 14px;
   font-weight: 800;
@@ -844,7 +845,7 @@ label.feld .feld-titel {
   border: 1px solid var(--linie);
   border-radius: 50%;
   background: var(--karte);
-  color: var(--mokka);
+  color: var(--text);
   font: inherit;
   font-size: 20px;
   line-height: 1;
@@ -879,7 +880,7 @@ label.feld .feld-titel {
   padding: 4px 2px;
   border: 0;
   background: none;
-  color: var(--mokka);
+  color: var(--text);
   font: inherit;
   font-weight: 700;
   text-decoration: underline;
@@ -927,7 +928,7 @@ label.feld .feld-titel {
   border: 1.5px solid var(--rand);
   border-radius: 14px;
   background: var(--karte);
-  color: var(--mokka);
+  color: var(--text);
   font: inherit;
   text-align: left;
   cursor: pointer;

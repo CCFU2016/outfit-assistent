@@ -32,7 +32,8 @@ und lässt sich wie eine normale App auf den Startbildschirm legen.
 | Champagner-Weiß | `#FCF9F3` | Hintergrund |
 | Weiß | `#FFFFFF` | Karten und die Leiste unten |
 | Helles Champagner | `#F3EBDD` | zweite Buttons und Markierungen |
-| Mokka | `#5C4033` | Text und wichtige Buttons |
+| Champagner | `#E3CDA4` | wichtige Buttons (mit dunkler Schrift) |
+| Dunkelgrau | `#3D3833` | Text und Rahmen von Gewähltem |
 | Sonnengelb, Himmelblau, Koralle | | Farbtupfer in den Symbolen |
 
 Kleidungsfotos werden **nie** eingefärbt oder gefiltert. Die App-Farben sind nur der Rahmen.
