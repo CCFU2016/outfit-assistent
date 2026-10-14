@@ -8,7 +8,7 @@ import { zeigeKleiderschrank } from "./kleiderschrank.js";
 import { zeigeFormular } from "./teil-formular.js";
 import { zeigeOutfit } from "./outfit.js";
 
-const VERSION = "0.4 (Outfit und Heute getragen)";
+const VERSION = "0.5 (neuer Name: My digital wardrobe)";
 
 const TABS = ["kleiderschrank", "outfit", "wetter"];
 

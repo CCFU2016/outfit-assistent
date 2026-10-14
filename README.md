@@ -1,4 +1,4 @@
-# Outfit-Assistent – dein digitaler Kleiderschrank
+# My digital wardrobe – dein digitaler Kleiderschrank
 
 Ein Schulprojekt: Du fotografierst deine eigene Kleidung, stellst Outfits zusammen
 und bekommst Vorschläge, die zum Wetter passen.

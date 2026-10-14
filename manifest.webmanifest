@@ -1,6 +1,6 @@
 {
-  "name": "Outfit-Assistent",
-  "short_name": "Outfits",
+  "name": "My digital wardrobe",
+  "short_name": "my wardrobe",
   "description": "Dein digitaler Kleiderschrank: Kleidung fotografieren, Outfits zusammenstellen und Vorschläge passend zum Wetter bekommen.",
   "lang": "de",
   "start_url": "./",
