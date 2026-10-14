@@ -1,44 +1,47 @@
 /* ==========================================================
-   My digital wardrobe – Aussehen der App
+   Mon Dressing – Aussehen der App
    ========================================================== */
 
 /* ---------- Schriften (liegen im Ordner fonts, kein Google) ---------- */
 
-/* Geschwungene Schrift für App-Namen und Überschriften */
+/* Elegante Schrift mit feinen und kräftigen Strichen, für App-Namen und Überschriften */
 @font-face {
-  font-family: "Lobster Two";
-  src: url("../fonts/lobster-two-700-italic.woff2") format("woff2");
-  font-weight: 700;
-  font-style: italic;
+  font-family: "Bodoni Moda";
+  src: url("../fonts/bodoni-moda-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
   font-display: swap;
 }
 
-/* Runde Schrift für Text, Buttons und Beschriftungen.
-   Eine einzige Datei enthält alle Stärken von dünn (200) bis sehr fett (1000). */
+/* Schlichte, moderne Schrift für Text, Buttons und Beschriftungen.
+   Eine einzige Datei enthält alle Stärken von dünn (100) bis sehr fett (900). */
 @font-face {
-  font-family: "Nunito";
-  src: url("../fonts/nunito-variabel.woff2") format("woff2");
-  font-weight: 200 1000;
+  font-family: "Jost";
+  src: url("../fonts/jost-variabel.woff2") format("woff2");
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
 /* ---------- App-Farben: hier an einer Stelle festgelegt ---------- */
 :root {
-  --hintergrund: #FCF9F3;  /* Champagner-Weiß, sehr hell */
-  --karte: #FFFFFF;        /* Weiß für Karten und die Leiste unten */
-  --flaeche: #F3EBDD;      /* helles Champagner für zweite Buttons und Markierungen */
-  --linie: #EADFCC;        /* feine Linien und Ränder */
-  --rand: #8F877F;         /* Rand von Eingabefeldern (warmes Grau, gut sichtbar) */
-  --text: #3D3833;         /* Dunkelgrau: Text, Ränder von Gewähltem */
-  --akzent: #E3CDA4;       /* Champagner: wichtige Buttons (Schrift darauf dunkel) */
+  /* Edel und schlicht: Weiß, fast Schwarz und ein zartes Grau-Beige */
+  --hintergrund: #FFFFFF;  /* Weiß */
+  --karte: #FFFFFF;        /* Karten und die Leiste unten */
+  --flaeche: #F3F0EB;      /* sehr helles Grau-Beige für zweite Buttons und Markierungen */
+  --linie: #E5E0D9;        /* feine Linien und Ränder */
+  --rand: #8C857C;         /* Rand von Eingabefeldern (gut sichtbar) */
+  --text: #1C1C1C;         /* fast Schwarz: Text, Symbole, Rahmen von Gewähltem */
+  --text-leise: #6F6A64;   /* Grau für Nebensachen (z. B. „Oberteil · mittel“) */
+  --akzent: #BAB3A9;       /* Grau-Beige: wichtige Buttons (Schrift darauf dunkel) */
   --regenblau: #4A84C4;    /* Schalter "regenfest" */
   --rot: #B3261E;          /* Löschen */
+  --ecke: 3px;             /* fast eckig, wie bei edlen Modemarken */
 
-  --schatten: 0 1px 2px rgb(61 56 51 / 6%), 0 6px 18px rgb(61 56 51 / 7%);
+  --schatten: none;        /* kein Schatten: flach und klar */
 
-  --schrift-schwung: "Lobster Two", "Snell Roundhand", cursive;
-  --schrift-text: "Nunito", system-ui, sans-serif;
+  --schrift-titel: "Bodoni Moda", "Didot", Georgia, serif;
+  --schrift-text: "Jost", system-ui, sans-serif;
 
   --abstand: 16px;         /* Rand links und rechts */
   --leiste-hoehe: 72px;    /* Höhe der Leiste unten */
@@ -74,6 +77,23 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Fett gedruckt: bei dieser Schrift reicht "halbfett" */
+b,
+strong {
+  font-weight: 600;
+}
+
+/* Symbole in Schwarz-Grau (siehe index.html):
+   "fuellung" deckt ab, was dahinter liegt, und hat die Farbe des Untergrunds;
+   "leise" sind Nebenlinien wie Sonnenstrahlen und Regentropfen in Grau. */
+.fuellung {
+  fill: var(--fuellung, var(--karte));
+}
+
+.leise {
+  stroke: var(--text-leise);
+}
+
 /* Die Symbol-Sammlung selbst wird nicht angezeigt */
 .symbole {
   display: none;
@@ -93,17 +113,21 @@ body {
 
 .app-name {
   margin: 0;
-  font-family: var(--schrift-schwung);
-  font-weight: 700;
-  font-style: italic;
-  font-size: 40px;
+  font-family: var(--schrift-titel);
+  font-weight: 500;
+  font-size: 28px;
   line-height: 1.2;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;  /* in Großbuchstaben, wie ein Markenname */
 }
 
 .untertitel {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 600;
+  margin: 4px 0 0;
+  color: var(--text-leise);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 
 /* ---------- Inhalt ---------- */
@@ -118,24 +142,24 @@ body {
 }
 
 .bereich-titel {
-  margin: 20px 0 12px;
-  font-family: var(--schrift-schwung);
-  font-weight: 700;
-  font-style: italic;
-  font-size: 30px;
+  margin: 26px 0 12px;
+  font-family: var(--schrift-titel);
+  font-weight: 500;
+  font-size: 25px;
   line-height: 1.2;
 }
 
-/* Karte: weiße Fläche mit runden Ecken und zartem Schatten */
+/* Karte: weiße Fläche mit feinem Rand */
 .karte {
   background: var(--karte);
   border: 1px solid var(--linie);
-  border-radius: 22px;
+  border-radius: var(--ecke);
   padding: 20px;
   box-shadow: var(--schatten);
 }
 
 .klein {
+  color: var(--text-leise);
   font-size: 15px;
 }
 
@@ -150,6 +174,7 @@ body {
   height: 72px;
   padding: 14px;
   border-radius: 50%;
+  --fuellung: var(--flaeche);
   background: var(--flaeche);
   fill: none;
   stroke: currentColor;
@@ -160,7 +185,7 @@ body {
 
 .leer-text {
   margin: 12px 0 4px;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .leer .klein {
@@ -169,6 +194,7 @@ body {
 
 .version {
   margin: 28px 0 0;
+  color: var(--text-leise);
   text-align: center;
   font-size: 13px;
 }
@@ -183,9 +209,9 @@ body {
   min-height: 48px;          /* groß genug für den Finger */
   padding: 12px 22px;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--ecke);
   font: inherit;
-  font-weight: 700;
+  font-weight: 500;
   text-align: center;
   text-decoration: none;
   cursor: pointer;
@@ -239,7 +265,7 @@ body {
 .hinweis-titel {
   margin: 0 0 6px;
   font-size: 17px;
-  font-weight: 800;
+  font-weight: 500;
 }
 
 .hinweis p {
@@ -270,19 +296,19 @@ body {
   align-items: center;
   justify-content: center;
   gap: 2px;
-  color: var(--text);
+  color: var(--text-leise);
   text-decoration: none;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 400;
+  letter-spacing: 0.04em;
 }
 
-/* Symbole: Linien in Dunkelgrau. Wetter und Shirt haben ihre eigenen Farben
-   direkt im Symbol (siehe index.html). */
+/* Symbole: Linien in der Textfarbe (schwarz-grau) */
 .tableiste svg {
   width: 56px;
   height: 32px;
   padding: 3px 15px;
-  border-radius: 999px;
+  border-radius: var(--ecke);
   fill: none;
   stroke: currentColor;
   stroke-width: 1.8;
@@ -292,10 +318,12 @@ body {
 
 /* Der gerade geöffnete Bereich bekommt eine helle Fläche hinter dem Symbol */
 .tableiste a[aria-current="page"] {
-  font-weight: 800;
+  color: var(--text);
+  font-weight: 500;
 }
 
 .tableiste a[aria-current="page"] svg {
+  --fuellung: var(--flaeche);
   background: var(--flaeche);
 }
 
@@ -312,10 +340,10 @@ body.formular-offen .inhalt {
 .meldung {
   margin: 16px 0 0;
   padding: 12px 16px;
-  border-radius: 14px;
+  border-radius: var(--ecke);
   background: #FBE3E1;
   color: #8C1D18;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 /* ---------- Kleiderschrank ---------- */
@@ -328,7 +356,7 @@ body.formular-offen .inhalt {
 
 .anzahl {
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .titel-zeile + .knopf-breit {
@@ -353,20 +381,21 @@ body.formular-offen .inhalt {
   width: 100%;
   aspect-ratio: 3 / 4;
   object-fit: cover;
-  border-radius: 18px;
+  border-radius: var(--ecke);
   background: var(--flaeche);
   box-shadow: var(--schatten);
 }
 
 .kachel-name {
   margin-top: 8px;
-  font-weight: 700;
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .kachel-info {
+  color: var(--text-leise);
   font-size: 13px;
 }
 
@@ -382,7 +411,7 @@ body.formular-offen .inhalt {
   display: inline-block;
   margin-top: 14px;
   color: inherit;
-  font-weight: 700;
+  font-weight: 500;
   text-decoration: none;
 }
 
@@ -405,7 +434,7 @@ body.formular-offen .inhalt {
 .feld-titel {
   padding: 0;
   margin-bottom: 8px;
-  font-weight: 800;
+  font-weight: 500;
 }
 
 label.feld .feld-titel {
@@ -414,7 +443,7 @@ label.feld .feld-titel {
 
 .feld-titel small,
 .schalter small {
-  font-weight: 600;
+  font-weight: 500;
   font-size: 14px;
 }
 
@@ -424,7 +453,7 @@ label.feld .feld-titel {
   min-height: 50px;
   padding: 12px 14px;
   border: 1.5px solid var(--rand);
-  border-radius: 14px;
+  border-radius: var(--ecke);
   background: var(--karte);
   color: var(--text);
   font: inherit;
@@ -448,7 +477,7 @@ label.feld .feld-titel {
   width: 100%;
   height: 160px;
   overflow: hidden;
-  border-radius: 18px;
+  border-radius: var(--ecke);
   background: var(--flaeche);
 }
 
@@ -472,7 +501,7 @@ label.feld .feld-titel {
   gap: 8px;
   padding: 16px;
   text-align: center;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .foto-platzhalter svg {
@@ -542,9 +571,9 @@ label.feld .feld-titel {
   min-height: 44px;
   padding: 8px 16px;
   border: 1.5px solid var(--rand);
-  border-radius: 999px;
+  border-radius: var(--ecke);
   background: var(--karte);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .chip input:checked + span {
@@ -583,14 +612,14 @@ label.feld .feld-titel {
   justify-content: center;
   gap: 0;
   padding: 8px 4px;
-  border-radius: 16px;
+  border-radius: var(--ecke);
   text-align: center;
-  font-weight: 800;
+  font-weight: 500;
 }
 
 .segment small {
   font-size: 12.5px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 /* Schalter für "regenfest" */
@@ -603,9 +632,9 @@ label.feld .feld-titel {
   min-height: 56px;
   padding: 10px 16px;
   border: 1.5px solid var(--rand);
-  border-radius: 16px;
+  border-radius: var(--ecke);
   background: var(--karte);
-  font-weight: 800;
+  font-weight: 500;
 }
 
 .schalter small {
@@ -697,18 +726,18 @@ label.feld .feld-titel {
   min-height: 40px;
   padding: 6px 14px;
   border: 1.5px solid var(--rand);
-  border-radius: 999px;
+  border-radius: var(--ecke);
   background: var(--karte);
   color: var(--text);
   font: inherit;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 500;
   cursor: pointer;
 }
 
 .filter-chip small {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .filter-chip[aria-pressed="true"] {
@@ -729,7 +758,7 @@ label.feld .feld-titel {
 .reihe-titel {
   margin: 0 0 6px;
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 500;
 }
 
 /* Die Teile einer Kategorie nebeneinander, seitlich wischbar */
@@ -758,7 +787,7 @@ label.feld .feld-titel {
   color: var(--text);
   font: inherit;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   text-align: left;
   cursor: pointer;
 }
@@ -767,7 +796,7 @@ label.feld .feld-titel {
   width: 88px;
   height: 117px;
   object-fit: cover;
-  border-radius: 14px;
+  border-radius: var(--ecke);
   border: 3px solid transparent;
   background: var(--flaeche);
 }
@@ -797,7 +826,7 @@ label.feld .feld-titel {
   background: var(--text);
   color: var(--karte);
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 500;
 }
 
 /* Das Outfit: Fotos untereinander */
@@ -825,14 +854,14 @@ label.feld .feld-titel {
 .outfit-teil .foto {
   max-width: 100%;
   max-height: 230px;
-  border-radius: 14px;
+  border-radius: var(--ecke);
   object-fit: contain;
 }
 
 .outfit-teil figcaption {
   margin-top: 4px;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 /* Kleiner runder ×-Knopf zum Entfernen */
@@ -863,10 +892,10 @@ label.feld .feld-titel {
 .status {
   margin: 12px 0 0;
   padding: 12px 16px;
-  border-radius: 14px;
+  border-radius: var(--ecke);
   background: #E3F1E7;
   color: #1E5631;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .ort-zeile {
@@ -882,7 +911,7 @@ label.feld .feld-titel {
   background: none;
   color: var(--text);
   font: inherit;
-  font-weight: 700;
+  font-weight: 500;
   text-decoration: underline;
   text-underline-offset: 3px;
   cursor: pointer;
@@ -926,7 +955,7 @@ label.feld .feld-titel {
   align-items: flex-start;
   padding: 10px 14px;
   border: 1.5px solid var(--rand);
-  border-radius: 14px;
+  border-radius: var(--ecke);
   background: var(--karte);
   color: var(--text);
   font: inherit;
@@ -935,6 +964,7 @@ label.feld .feld-titel {
 }
 
 .treffer span {
+  color: var(--text-leise);
   font-size: 14px;
 }
 
@@ -961,7 +991,7 @@ label.feld .feld-titel {
   gap: 2px;
   padding: 10px 6px;
   border: 1.5px solid var(--linie);
-  border-radius: 16px;
+  border-radius: var(--ecke);
   background: var(--karte);
   color: var(--text);
   font: inherit;
@@ -977,6 +1007,7 @@ label.feld .feld-titel {
   height: 32px;
   margin: 2px 0;
   fill: none;
+  stroke: currentColor;
   stroke-width: 1.6;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -984,16 +1015,25 @@ label.feld .feld-titel {
 
 .tag-temp {
   font-size: 17px;
-  font-weight: 800;
+  font-weight: 500;
 }
 
 .tag-knopf small {
+  color: var(--text-leise);
   font-size: 13px;
 }
 
 .tag-knopf[aria-pressed="true"] {
+  --fuellung: var(--akzent);
   border-color: var(--akzent);
   background: var(--akzent);
+}
+
+/* Auf dem Grau-Beige wäre Grau zu blass: dort dunkel */
+.tag-knopf[aria-pressed="true"] small,
+.tag-knopf[aria-pressed="true"] .leise {
+  color: var(--text);
+  stroke: var(--text);
 }
 
 .vorschlag-karte {
@@ -1002,15 +1042,14 @@ label.feld .feld-titel {
 
 .vorschlag-titel {
   margin: 0;
-  font-family: var(--schrift-schwung);
-  font-size: 24px;
-  font-style: italic;
-  font-weight: 700;
+  font-family: var(--schrift-titel);
+  font-size: 21px;
+  font-weight: 500;
 }
 
 .vorschlag-wetter {
   margin: 2px 0 14px;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .vorschlag-fotos {
@@ -1043,7 +1082,7 @@ label.feld .feld-titel {
 .tipp-hinweis {
   margin: 0 0 12px;
   padding: 10px 14px;
-  border-radius: 14px;
+  border-radius: var(--ecke);
   background: var(--flaeche);
   font-size: 15px;
 }
@@ -1058,7 +1097,7 @@ label.feld .feld-titel {
 .verlauf-eintrag {
   padding: 12px 14px;
   border: 1px solid var(--linie);
-  border-radius: 18px;
+  border-radius: var(--ecke);
   background: var(--karte);
 }
 
@@ -1071,6 +1110,7 @@ label.feld .feld-titel {
 
 .verlauf-kopf span {
   flex: 1;
+  color: var(--text-leise);
   font-size: 15px;
 }
 
@@ -1084,7 +1124,7 @@ label.feld .feld-titel {
   width: 54px;
   height: 72px;
   flex: none;
-  border-radius: 10px;
+  border-radius: var(--ecke);
   object-fit: cover;
 }
 

@@ -104,7 +104,7 @@ function vorschlagFuerTag(teile, tag, getragen, anlass, tagDavor, kuerzlichGetra
     return {
       teile: [],
       gruende,
-      hinweise: [`Für einen Vorschlag brauche ich noch ${fehlt} (oder ein Kleid). Leg es im Kleiderschrank an!`],
+      hinweise: [`Für einen Vorschlag brauche ich noch ${fehlt} (oder ein Kleid). Leg es in deiner Garderobe an!`],
     };
   }
 
@@ -178,7 +178,7 @@ function vorschlagFuerTag(teile, tag, getragen, anlass, tagDavor, kuerzlichGetra
     gruende.push("Mit dabei: Sachen, die du bei ähnlichem Wetter schon getragen hast.");
   }
   if (anlass && !gewaehlt.some(({ teil }) => (teil.anlaesse || []).includes(anlass))) {
-    hinweise.push(`Für „${nameVon(ANLAESSE, anlass)}“ hast du noch keine Teile markiert.`);
+    hinweise.push(`Für „${nameVon(ANLAESSE, anlass)}“ hast du noch keine Stücke markiert.`);
   }
 
   // Tipps zu Farben und Tasche (z. B. wenn der Kleiderschrank nicht genug passende Farben hat)

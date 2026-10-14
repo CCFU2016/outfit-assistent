@@ -59,9 +59,9 @@ function zeichneAuswahl() {
   if (teile.length === 0) {
     const hinweis = document.createElement("div");
     hinweis.className = "karte leer";
-    hinweis.innerHTML = `<p class="leer-text">Dein Kleiderschrank ist noch leer.</p>
-      <p class="klein">Leg zuerst ein paar Teile an, dann kannst du hier Outfits zusammenstellen.</p>
-      <a class="knopf knopf-haupt" href="#neues-teil">Neues Teil</a>`;
+    hinweis.innerHTML = `<p class="leer-text">Deine Garderobe ist noch leer.</p>
+      <p class="klein">Leg zuerst ein paar Stücke an, dann kannst du hier Looks zusammenstellen.</p>
+      <a class="knopf knopf-haupt" href="#neues-teil">Neues Stück</a>`;
     auswahlBereich.append(hinweis);
     return;
   }
@@ -126,7 +126,7 @@ function zeichneVorschau() {
   if (gewaehlt.length === 0) {
     const hinweis = document.createElement("p");
     hinweis.className = "leer-hinweis";
-    hinweis.textContent = teile.length ? "Noch nichts ausgewählt. Tippe oben auf deine Teile." : "Noch keine Teile da.";
+    hinweis.textContent = teile.length ? "Noch nichts ausgewählt. Tippe oben auf deine Stücke." : "Noch keine Stücke da.";
     vorschau.replaceChildren(hinweis);
   } else {
     vorschau.replaceChildren(...gewaehlt.map((teil) => {
@@ -137,7 +137,7 @@ function zeichneVorschau() {
       weg.type = "button";
       weg.className = "weg-knopf";
       weg.textContent = "×";
-      weg.setAttribute("aria-label", `${teil.name} aus dem Outfit nehmen`);
+      weg.setAttribute("aria-label", `${teil.name} aus dem Look nehmen`);
       weg.addEventListener("click", () => waehle(teil));
 
       const figur = document.createElement("figure");
@@ -181,7 +181,7 @@ async function zeichneOrtZeile() {
 knopfGetragen.addEventListener("click", async () => {
   if (auswahl.size === 0) return;
   const datum = heute();
-  if ((await getragenLaden(datum)) && !confirm("Für heute ist schon ein Outfit gespeichert. Durch dieses ersetzen?")) {
+  if ((await getragenLaden(datum)) && !confirm("Für heute ist schon ein Look gespeichert. Durch diesen ersetzen?")) {
     return;
   }
 
@@ -230,7 +230,7 @@ async function zeichneVerlauf() {
   if (eintraege.length === 0) {
     const hinweis = document.createElement("p");
     hinweis.className = "klein";
-    hinweis.textContent = "Noch nichts gespeichert. Stell ein Outfit zusammen und tippe auf „Heute getragen“.";
+    hinweis.textContent = "Noch nichts gespeichert. Stell einen Look zusammen und tippe auf „Look des Tages speichern“.";
     verlaufListe.replaceChildren(hinweis);
     return;
   }

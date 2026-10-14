@@ -4,18 +4,18 @@
   <meta charset="utf-8">
   <!-- Handy-Ansicht: volle Breite, kein Herauszoomen, Platz bis an den Bildschirmrand -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>My digital wardrobe</title>
-  <meta name="description" content="Dein digitaler Kleiderschrank: Kleidung fotografieren, Outfits zusammenstellen und Vorschläge passend zum Wetter bekommen.">
+  <title>Mon Dressing</title>
+  <meta name="description" content="Deine digitale Garderobe: Kleidung fotografieren, Looks zusammenstellen und Vorschläge passend zum Wetter bekommen.">
 
   <!-- Steckbrief der App (Name, Icon, Farben) für den Startbildschirm -->
   <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#FCF9F3">
+  <meta name="theme-color" content="#FFFFFF">
   <!-- Die App ist immer hell, auch wenn das Handy im Dunkelmodus ist -->
   <meta name="color-scheme" content="light">
 
   <!-- Extra-Angaben, die nur das iPhone und das iPad brauchen -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="my wardrobe">
+  <meta name="apple-mobile-web-app-title" content="Mon Dressing">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 
@@ -23,8 +23,8 @@
   <link rel="icon" href="icons/icon-192.png" type="image/png" sizes="192x192">
 
   <!-- Die Schriften liegen in der App selbst (Ordner fonts), nicht bei Google -->
-  <link rel="preload" href="fonts/lobster-two-700-italic.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="fonts/nunito-variabel.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/bodoni-moda-500.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/jost-variabel.woff2" as="font" type="font/woff2" crossorigin>
 
   <link rel="stylesheet" href="css/style.css">
   <script type="module" src="js/app.js"></script>
@@ -36,27 +36,28 @@
       <path d="M12 10V9c0-.9.7-1.3 1.3-1.7a2.3 2.3 0 1 0-3.5-2"/>
       <path d="M12 10 3.7 15.4c-.9.6-.5 2.1.6 2.1h15.4c1.1 0 1.5-1.5.6-2.1Z"/>
     </symbol>
-    <!-- Shirt in Koralle -->
+    <!-- Die Symbole sind schwarz-grau: Linien in der Textfarbe, Strahlen und Tropfen in Grau.
+         "fuellung" deckt ab, was dahinter liegt (z. B. die Sonne hinter der Wolke). -->
     <symbol id="symbol-shirt" viewBox="0 0 24 24">
-      <path fill="#FBDCD5" stroke="#D2695C" d="M9 4 4.5 6.5l1.7 3.6 1.8-.8V20h8V9.3l1.8.8 1.7-3.6L15 4c-.4 1.3-1.6 2.2-3 2.2S9.4 5.3 9 4Z"/>
+      <path d="M9 4 4.5 6.5l1.7 3.6 1.8-.8V20h8V9.3l1.8.8 1.7-3.6L15 4c-.4 1.3-1.6 2.2-3 2.2S9.4 5.3 9 4Z"/>
     </symbol>
-    <!-- Gelbe Sonne hinter einer blauen Wolke -->
+    <!-- Sonne hinter einer Wolke -->
     <symbol id="symbol-wetter" viewBox="0 0 24 24">
-      <circle fill="#FFD54F" stroke="#E0A100" cx="8" cy="8" r="3"/>
-      <path stroke="#E0A100" d="M8 2.2v1.3M2.2 8h1.3M3.9 3.9l.9.9M12.1 3.9l-.9.9M3.9 12.1l.9-.9"/>
-      <path fill="#DDEBFA" stroke="#4A84C4" d="M10 20h7.5a3.5 3.5 0 0 0 .4-7 5 5 0 0 0-9.6 1.6A2.7 2.7 0 0 0 10 20Z"/>
+      <circle class="fuellung" cx="8" cy="8" r="3"/>
+      <path class="leise" d="M8 2.2v1.3M2.2 8h1.3M3.9 3.9l.9.9M12.1 3.9l-.9.9M3.9 12.1l.9-.9"/>
+      <path class="fuellung" d="M10 20h7.5a3.5 3.5 0 0 0 .4-7 5 5 0 0 0-9.6 1.6A2.7 2.7 0 0 0 10 20Z"/>
     </symbol>
     <!-- Fürs Wetter der einzelnen Tage: Sonne, Wolke, Wolke mit Regen -->
     <symbol id="symbol-sonne" viewBox="0 0 24 24">
-      <circle fill="#FFD54F" stroke="#E0A100" cx="12" cy="12" r="4.2"/>
-      <path stroke="#E0A100" d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/>
+      <circle class="fuellung" cx="12" cy="12" r="4.2"/>
+      <path class="leise" d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/>
     </symbol>
     <symbol id="symbol-wolke" viewBox="0 0 24 24">
-      <path fill="#DDEBFA" stroke="#4A84C4" d="M7.5 18h10a4 4 0 0 0 .5-8 5.5 5.5 0 0 0-10.6 1.8A3.1 3.1 0 0 0 7.5 18Z"/>
+      <path class="fuellung" d="M7.5 18h10a4 4 0 0 0 .5-8 5.5 5.5 0 0 0-10.6 1.8A3.1 3.1 0 0 0 7.5 18Z"/>
     </symbol>
     <symbol id="symbol-regen" viewBox="0 0 24 24">
-      <path fill="#DDEBFA" stroke="#4A84C4" d="M7.5 14.5h10a4 4 0 0 0 .5-8 5.5 5.5 0 0 0-10.6 1.8 3.1 3.1 0 0 0 .1 6.2Z"/>
-      <path stroke="#4A84C4" d="m9 17.5-1 2.5M13 17.5l-1 2.5M17 17.5l-1 2.5"/>
+      <path class="fuellung" d="M7.5 14.5h10a4 4 0 0 0 .5-8 5.5 5.5 0 0 0-10.6 1.8 3.1 3.1 0 0 0 .1 6.2Z"/>
+      <path class="leise" d="m9 17.5-1 2.5M13 17.5l-1 2.5M17 17.5l-1 2.5"/>
     </symbol>
     <symbol id="symbol-kamera" viewBox="0 0 24 24">
       <path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.2-2h6.6l1.2 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5Z"/>
@@ -70,8 +71,8 @@
   </svg>
 
   <header class="kopf">
-    <h1 class="app-name">My digital wardrobe</h1>
-    <p class="untertitel">Was ziehe ich heute an?</p>
+    <h1 class="app-name">Mon Dressing</h1>
+    <p class="untertitel">Dein Stil für jeden Tag</p>
   </header>
 
   <!-- Tipp zum Installieren: erscheint nur im Browser, nicht in der App auf dem Startbildschirm -->
@@ -88,17 +89,17 @@
     <!-- Bereich 1: Kleiderschrank -->
     <section id="kleiderschrank" class="bereich" aria-labelledby="titel-kleiderschrank">
       <div class="titel-zeile">
-        <h2 id="titel-kleiderschrank" class="bereich-titel">Dein Kleiderschrank</h2>
+        <h2 id="titel-kleiderschrank" class="bereich-titel">Deine Garderobe</h2>
         <span id="teile-anzahl" class="anzahl"></span>
       </div>
       <a href="#neues-teil" class="knopf knopf-haupt knopf-breit">
         <svg aria-hidden="true"><use href="#symbol-kamera"/></svg>
-        Neues Teil
+        Neues Stück
       </a>
       <div id="kleiderschrank-leer" class="karte leer" hidden>
         <svg class="leer-symbol" aria-hidden="true"><use href="#symbol-buegel"/></svg>
-        <p class="leer-text">Noch ist dein Kleiderschrank leer.</p>
-        <p class="klein">Tippe auf „Neues Teil“ und fotografiere dein erstes Kleidungsstück.</p>
+        <p class="leer-text">Noch ist deine Garderobe leer.</p>
+        <p class="klein">Tippe auf „Neues Stück“ und fotografiere dein erstes Kleidungsstück.</p>
       </div>
       <!-- Filter: nur eine Kategorie zeigen -->
       <div id="filter-leiste" class="filter-leiste" role="group" aria-label="Nach Kategorie filtern" hidden></div>
@@ -110,8 +111,8 @@
 
     <!-- Formular: Teil anlegen oder bearbeiten -->
     <section id="formular" class="bereich" aria-labelledby="formular-titel" hidden>
-      <a href="#kleiderschrank" class="zurueck">‹ Zurück zum Kleiderschrank</a>
-      <h2 id="formular-titel" class="bereich-titel">Neues Teil</h2>
+      <a href="#kleiderschrank" class="zurueck">‹ Zurück zur Garderobe</a>
+      <h2 id="formular-titel" class="bereich-titel">Neues Stück</h2>
 
       <form id="teil-formular" class="formular" novalidate>
         <!-- Foto -->
@@ -136,7 +137,7 @@
               <input class="foto-eingabe unsichtbar" type="file" accept="image/*">
             </label>
           </div>
-          <p class="tipp"><b>Foto-Tipp:</b> Leg das Teil flach auf einen einfarbigen Untergrund, der sich farblich abhebt.
+          <p class="tipp"><b>Foto-Tipp:</b> Leg das Stück flach auf einen einfarbigen Untergrund, der sich farblich abhebt.
             Fotografiere es ganz, von oben, bei Tageslicht ohne Blitz. Dann stimmen die Farben, und später
             kann die App den Hintergrund leicht entfernen.</p>
         </div>
@@ -190,19 +191,19 @@
           <a href="#kleiderschrank" class="knopf knopf-zweit">Abbrechen</a>
           <button id="knopf-speichern" class="knopf knopf-haupt" type="submit">Speichern</button>
         </div>
-        <button id="knopf-loeschen" class="knopf knopf-loeschen" type="button" hidden>Teil löschen</button>
+        <button id="knopf-loeschen" class="knopf knopf-loeschen" type="button" hidden>Stück löschen</button>
       </form>
     </section>
 
     <!-- Bereich 2: Outfit zusammenstellen -->
     <section id="outfit" class="bereich" aria-labelledby="titel-outfit" hidden>
-      <h2 id="titel-outfit" class="bereich-titel">Outfit zusammenstellen</h2>
-      <p class="klein einleitung">Tippe auf deine Teile: pro Kategorie eins, Accessoires auch mehrere.</p>
+      <h2 id="titel-outfit" class="bereich-titel">Look zusammenstellen</h2>
+      <p class="klein einleitung">Tippe auf deine Stücke: pro Kategorie eins, Accessoires auch mehrere.</p>
 
       <!-- Auswahl: eine Reihe pro Kategorie (wird von outfit.js gefüllt) -->
       <div id="outfit-auswahl"></div>
 
-      <h2 class="bereich-titel">Dein Outfit</h2>
+      <h2 class="bereich-titel">Dein Look</h2>
       <!-- Die gewählten Teile untereinander: oben → unten → Schuhe -->
       <div id="outfit-vorschau" class="karte outfit-karte"></div>
       <!-- Tipps: passen die Farben? passt die Tasche? -->
@@ -211,17 +212,17 @@
       <!-- Hier erscheint bei Bedarf die Ort-Auswahl fürs Wetter -->
       <div id="outfit-ort" hidden></div>
 
-      <button id="knopf-getragen" class="knopf knopf-haupt knopf-breit" type="button" disabled>Heute getragen</button>
+      <button id="knopf-getragen" class="knopf knopf-haupt knopf-breit" type="button" disabled>Look des Tages speichern</button>
       <p id="outfit-status" class="status" role="status" hidden></p>
       <p id="outfit-ort-zeile" class="ort-zeile"></p>
 
-      <h2 class="bereich-titel">Zuletzt getragen</h2>
+      <h2 class="bereich-titel">Deine Looks</h2>
       <div id="getragen-liste" class="verlauf"></div>
     </section>
 
     <!-- Bereich 3: Wetter und Vorschläge für die nächsten Tage (wird von wetter-seite.js gefüllt) -->
     <section id="wetter" class="bereich" aria-labelledby="titel-wetter" hidden>
-      <h2 id="titel-wetter" class="bereich-titel">Wetter &amp; Vorschläge</h2>
+      <h2 id="titel-wetter" class="bereich-titel">Wetter &amp; Looks</h2>
       <!-- Hier erscheint bei Bedarf die Ort-Auswahl -->
       <div id="wetter-ort" hidden></div>
       <div id="wetter-inhalt"></div>
@@ -235,11 +236,11 @@
   <nav class="tableiste" aria-label="Bereiche">
     <a href="#kleiderschrank" data-bereich="kleiderschrank">
       <svg aria-hidden="true"><use href="#symbol-buegel"/></svg>
-      <span>Kleiderschrank</span>
+      <span>Garderobe</span>
     </a>
     <a href="#outfit" data-bereich="outfit">
       <svg aria-hidden="true"><use href="#symbol-shirt"/></svg>
-      <span>Outfit</span>
+      <span>Look</span>
     </a>
     <a href="#wetter" data-bereich="wetter">
       <svg aria-hidden="true"><use href="#symbol-wetter"/></svg>

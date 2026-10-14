@@ -69,7 +69,7 @@ export async function zeigeFormular(id) {
     return;
   }
 
-  titel.textContent = bisherigesTeil ? "Teil bearbeiten" : "Neues Teil";
+  titel.textContent = bisherigesTeil ? "Stück bearbeiten" : "Neues Stück";
   knopfLoeschen.hidden = !bisherigesTeil;
 
   if (bisherigesTeil) {

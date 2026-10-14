@@ -61,7 +61,7 @@ export function kombiTipps(outfit, alleTeile) {
   }
 
   if (outfit.filter((teil) => teil.farbe === "bunt").length > 1) {
-    tipps.push("Mehrere gemusterte Teile auf einmal können unruhig wirken. Kombinier ein Muster lieber mit einfarbigen Teilen.");
+    tipps.push("Mehrere gemusterte Stücke auf einmal können unruhig wirken. Kombinier ein Muster lieber mit einfarbigen Stücken.");
   }
 
   // Die Tasche
@@ -69,7 +69,7 @@ export function kombiTipps(outfit, alleTeile) {
   const tasche = outfit.find(istTasche);
   if (tasche && !tascheGehtZu(tasche, outfit)) {
     const besser = passend.find((teil) => teil.id !== tasche.id);
-    tipps.push(`Die Farbe der Tasche „${tasche.name}“ (${nameVon(FARBEN, tasche.farbe)}) kommt sonst nicht im Outfit vor.` +
+    tipps.push(`Die Farbe der Tasche „${tasche.name}“ (${nameVon(FARBEN, tasche.farbe)}) kommt sonst nicht im Look vor.` +
       (besser ? ` Besser passt: „${besser.name}“.` : ""));
   } else if (!tasche && passend.length > 0) {
     tipps.push(`Dazu passt deine Tasche „${passend[0].name}“. 👜`);

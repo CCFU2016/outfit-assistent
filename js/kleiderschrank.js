@@ -28,11 +28,11 @@ function zeichne() {
 
   document.getElementById("kleiderschrank-leer").hidden = teile.length > 0;
   document.getElementById("teile-anzahl").textContent =
-    teile.length === 1 ? "1 Teil" : teile.length > 1 ? `${teile.length} Teile` : "";
+    teile.length === 1 ? "1 Stück" : teile.length > 1 ? `${teile.length} Stücke` : "";
 
   // Hinweis, wenn in der gewählten Kategorie noch nichts ist
   filterLeer.hidden = teile.length === 0 || sichtbar.length > 0;
-  filterLeer.textContent = `Noch nichts in „${nameVon(KATEGORIEN, filter)}“. Tippe auf „Neues Teil“, um etwas hinzuzufügen.`;
+  filterLeer.textContent = `Noch nichts in „${nameVon(KATEGORIEN, filter)}“. Tippe auf „Neues Stück“, um etwas hinzuzufügen.`;
 
   // Accessoires von früher haben noch keine "Art" (z. B. Tasche)
   const ohneArt = teile.filter((teil) => teil.kategorie === "accessoire" && !teil.art);

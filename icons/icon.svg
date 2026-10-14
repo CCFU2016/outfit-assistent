@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- App-Icon: Kleiderbügel in Mokka auf Champagner -->
-  <rect width="512" height="512" fill="#F7F1E6"/>
-  <g transform="translate(0 34)" fill="none" stroke="#5C4033" stroke-width="26" stroke-linecap="round" stroke-linejoin="round">
+  <!-- App-Icon: Kleiderbügel in fast Schwarz auf Weiß -->
+  <rect width="512" height="512" fill="#FFFFFF"/>
+  <g transform="translate(0 34)" fill="none" stroke="#1C1C1C" stroke-width="26" stroke-linecap="round" stroke-linejoin="round">
     <path d="M256 222v-14c0-17 13-25 25-33a42 42 0 1 0-63-36"/>
     <path d="M256 222 116 312c-16 11-9 34 10 34h260c19 0 26-23 10-34Z"/>
   </g>

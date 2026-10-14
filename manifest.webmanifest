@@ -1,13 +1,13 @@
 {
-  "name": "My digital wardrobe",
-  "short_name": "my wardrobe",
-  "description": "Dein digitaler Kleiderschrank: Kleidung fotografieren, Outfits zusammenstellen und Vorschläge passend zum Wetter bekommen.",
+  "name": "Mon Dressing",
+  "short_name": "Mon Dressing",
+  "description": "Deine digitale Garderobe: Kleidung fotografieren, Looks zusammenstellen und Vorschläge passend zum Wetter bekommen.",
   "lang": "de",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#FCF9F3",
-  "theme_color": "#FCF9F3",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FFFFFF",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },

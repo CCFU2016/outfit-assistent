@@ -46,7 +46,7 @@ function zeigeOrtFrage() {
   karte.innerHTML = `
     <svg class="leer-symbol" aria-hidden="true"><use href="#symbol-wetter"/></svg>
     <p class="leer-text">Für das Wetter braucht die App deinen Ort.</p>
-    <p class="klein">Dann bekommst du für heute und die nächsten Tage einen Outfit-Vorschlag.</p>
+    <p class="klein">Dann bekommst du für heute und die nächsten Tage einen Vorschlag für deinen Look.</p>
     <button type="button" class="knopf knopf-haupt">Ort festlegen</button>`;
   karte.querySelector("button").addEventListener("click", async () => {
     inhalt.replaceChildren();
@@ -191,11 +191,11 @@ function zeichneVorschlag(tag, vorschlag) {
 
   if (teile.length === 0) {
     const leer = document.createElement("p");
-    leer.textContent = "Dein Kleiderschrank ist noch leer. Leg zuerst ein paar Teile an, dann suche ich dir etwas aus.";
+    leer.textContent = "Deine Garderobe ist noch leer. Leg zuerst ein paar Stücke an, dann suche ich dir etwas aus.";
     const link = document.createElement("a");
     link.className = "knopf knopf-haupt knopf-breit";
     link.href = "#neues-teil";
-    link.textContent = "Neues Teil";
+    link.textContent = "Neues Stück";
     karte.append(leer, link);
     return karte;
   }
@@ -237,7 +237,7 @@ function zeichneVorschlag(tag, vorschlag) {
     const uebernehmen = document.createElement("button");
     uebernehmen.type = "button";
     uebernehmen.className = "knopf knopf-haupt knopf-breit";
-    uebernehmen.textContent = "Ins Outfit übernehmen";
+    uebernehmen.textContent = "Als Look übernehmen";
     uebernehmen.addEventListener("click", () => {
       outfitUebernehmen(vorschlag.teile.map((teil) => teil.id));
       location.hash = "#outfit";
