@@ -1,4 +1,4 @@
-# Mon Dressing – deine digitale Garderobe
+# Mon Dressing Raffiné – deine digitale Garderobe
 
 Ein Schulprojekt: Du fotografierst deine eigene Kleidung, stellst Looks zusammen
 und bekommst Vorschläge, die zum Wetter passen und farblich zusammenpassen.
@@ -65,7 +65,7 @@ schon auf deinem Handy angekommen ist.
 - [x] 1.2 Kleiderschrank und Outfit
 - [x] 1.3 Wetter und Vorschläge für heute und die nächsten 4 Tage
 - [x] Farben und Taschen passend kombinieren (höchstens 3 Farben)
-- [x] Neuer Name „Mon Dressing“ und neuer Look
+- [x] Neuer Name „Mon Dressing Raffiné“ und neuer Look
 - [ ] 1.4 Sicherung speichern und laden
 
 ## Lizenzen

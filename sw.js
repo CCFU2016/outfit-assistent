@@ -2,7 +2,7 @@
 // Er läuft im Hintergrund und legt die App-Dateien auf dem Gerät ab.
 // So startet die App schnell und funktioniert auch ohne Internet.
 
-const SPEICHER_NAME = "outfit-assistent-v9";
+const SPEICHER_NAME = "outfit-assistent-v10";
 
 // Diese Dateien braucht die App zum Starten
 const APP_DATEIEN = [

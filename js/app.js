@@ -9,7 +9,7 @@ import { zeigeFormular } from "./teil-formular.js";
 import { zeigeOutfit } from "./outfit.js";
 import { zeigeWetter } from "./wetter-seite.js";
 
-const VERSION = "0.9 (Mon Dressing: neuer Look)";
+const VERSION = "0.9.1 (Mon Dressing Raffiné)";
 
 const TABS = ["kleiderschrank", "outfit", "wetter"];
 
