@@ -10,10 +10,10 @@
 //   − regenfeste Schuhe (z. B. Gummistiefel), wenn es trocken bleibt
 // Das Wetter zählt immer am meisten: Abwechslung gibt es nur zwischen Teilen, die gleich gut passen.
 // Danach kommen die Farben: Die App probiert alle Kombinationen durch und nimmt lieber eine
-// mit höchstens 2 Farben (siehe kombi.js). Bei Kälte kommt etwas Warmes dazu, sonst eine passende Tasche.
+// mit höchstens 3 Farben (MAX_FARBEN in kombi.js). Bei Kälte kommt etwas Warmes dazu, sonst eine passende Tasche.
 
 import { KATEGORIEN, WAERME, ANLAESSE, FARBEN, OUTFIT_REIHENFOLGE, nameVon } from "./daten.js";
-import { MAX_FARBEN, farbenVon, farbStrafe, istTasche, tascheGehtZu, passendeTaschen, kombiTipps } from "./kombi.js";
+import { MAX_FARBEN, farbenVon, farbStrafe, istTasche, tascheGehtZu, passendeTaschen, kombiTipps, aufzaehlen } from "./kombi.js";
 
 // Die Richtwerte aus dem Formular, bezogen auf die Höchsttemperatur des Tages
 export function passendeWaerme(tempMax) {
@@ -162,7 +162,7 @@ function vorschlagFuerTag(teile, tag, getragen, anlass, tagDavor, kuerzlichGetra
 
   const farben = farbenVon(imOutfit());
   if (farben.length <= MAX_FARBEN && farben.length > 0) {
-    gruende.push(`Farblich passt es: ${farben.map((farbe) => nameVon(FARBEN, farbe)).join(" und ")}.`);
+    gruende.push(`Farblich passt es: ${aufzaehlen(farben.map((farbe) => nameVon(FARBEN, farbe)))}.`);
   }
 
   // Wo gibt es noch gar nichts mit der passenden Wärme? Dann freundlich sagen, was fehlt.

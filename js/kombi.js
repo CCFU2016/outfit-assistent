@@ -10,7 +10,12 @@
 
 import { FARBEN, nameVon } from "./daten.js";
 
-export const MAX_FARBEN = 2;
+export const MAX_FARBEN = 3;
+
+// ["Rot", "Weiß", "Schwarz"] → "Rot, Weiß und Schwarz"
+export function aufzaehlen(namen) {
+  return namen.length <= 1 ? namen.join("") : `${namen.slice(0, -1).join(", ")} und ${namen.at(-1)}`;
+}
 
 // Die verschiedenen Farben in einem Outfit, die häufigste zuerst
 export function farbenVon(teile) {
@@ -52,7 +57,7 @@ export function kombiTipps(outfit, alleTeile) {
   if (farben.length > MAX_FARBEN) {
     const namen = farben.map((farbe) => nameVon(FARBEN, farbe));
     tipps.push(`Ziemlich viele Farben: ${namen.join(", ")}. ` +
-      `Probier, bei ${MAX_FARBEN} Farben zu bleiben, z. B. ${namen.slice(0, MAX_FARBEN).join(" und ")}.`);
+      `Probier, bei ${MAX_FARBEN} Farben zu bleiben, z. B. ${aufzaehlen(namen.slice(0, MAX_FARBEN))}.`);
   }
 
   if (outfit.filter((teil) => teil.farbe === "bunt").length > 1) {
