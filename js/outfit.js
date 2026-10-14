@@ -7,9 +7,11 @@ import { KATEGORIEN, OUTFIT_REIHENFOLGE, nameVon } from "./daten.js";
 import { bildAdressen, fotoBild } from "./bilder.js";
 import { ortBestimmen, ortAuswaehlen } from "./ort-auswahl.js";
 import { gespeicherterOrt, wetterHolen, wetterText } from "./wetter.js";
+import { kombiTipps } from "./kombi.js";
 
 const auswahlBereich = document.getElementById("outfit-auswahl");
 const vorschau = document.getElementById("outfit-vorschau");
+const tippBereich = document.getElementById("outfit-tipps");
 const knopfGetragen = document.getElementById("knopf-getragen");
 const status = document.getElementById("outfit-status");
 const ortZeile = document.getElementById("outfit-ort-zeile");
@@ -145,6 +147,17 @@ function zeichneVorschau() {
     }));
   }
   knopfGetragen.disabled = gewaehlt.length === 0;
+  zeichneTipps(gewaehlt);
+}
+
+// Tipps: zu viele Farben? passt die Tasche? (die Regeln stehen in kombi.js)
+function zeichneTipps(gewaehlt) {
+  tippBereich.replaceChildren(...kombiTipps(gewaehlt, teile).map((tipp) => {
+    const absatz = document.createElement("p");
+    absatz.className = "tipp-hinweis";
+    absatz.textContent = tipp;
+    return absatz;
+  }));
 }
 
 // ---------- Ort fürs Wetter ----------

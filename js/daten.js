@@ -12,6 +12,16 @@ export const KATEGORIEN = [
   { wert: "accessoire", name: "Accessoire" },
 ];
 
+// Welche Art von Accessoire? (Nur bei der Kategorie "Accessoire")
+// Die Tasche braucht die App, um eine farblich passende vorzuschlagen.
+export const ACCESSOIRE_ARTEN = [
+  { wert: "tasche", name: "Tasche" },
+  { wert: "muetze-schal", name: "Mütze/Schal" },
+  { wert: "schmuck", name: "Schmuck" },
+  { wert: "guertel", name: "Gürtel" },
+  { wert: "sonstiges", name: "Sonstiges" },
+];
+
 // So stehen die Teile im Outfit untereinander: von oben nach unten
 export const OUTFIT_REIHENFOLGE = ["jacke", "oberteil", "kleid", "hose-rock", "schuhe", "accessoire"];
 

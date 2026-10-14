@@ -1,12 +1,13 @@
 // kleiderschrank.js – zeigt alle Kleidungsstücke als Bilder, nach Kategorie filterbar
 
 import { alleTeile } from "./speicher.js";
-import { KATEGORIEN, WAERME, nameVon } from "./daten.js";
+import { KATEGORIEN, ACCESSOIRE_ARTEN, WAERME, nameVon } from "./daten.js";
 import { bildAdressen, fotoBild } from "./bilder.js";
 
 const liste = document.getElementById("teile-liste");
 const filterLeiste = document.getElementById("filter-leiste");
 const filterLeer = document.getElementById("filter-leer");
+const artFehlt = document.getElementById("art-fehlt");
 
 let teile = [];          // alle Teile (neueste zuerst)
 let filter = "alle";     // "alle" oder eine Kategorie, z. B. "schuhe"
@@ -32,6 +33,13 @@ function zeichne() {
   // Hinweis, wenn in der gewählten Kategorie noch nichts ist
   filterLeer.hidden = teile.length === 0 || sichtbar.length > 0;
   filterLeer.textContent = `Noch nichts in „${nameVon(KATEGORIEN, filter)}“. Tippe auf „Neues Teil“, um etwas hinzuzufügen.`;
+
+  // Accessoires von früher haben noch keine "Art" (z. B. Tasche)
+  const ohneArt = teile.filter((teil) => teil.kategorie === "accessoire" && !teil.art);
+  artFehlt.hidden = ohneArt.length === 0;
+  artFehlt.textContent = ohneArt.length === 1
+    ? `Tipp: Bei „${ohneArt[0].name}“ fehlt noch die Art (z. B. Tasche). Tippe es an und trag sie nach, dann passen die Vorschläge besser.`
+    : `Tipp: Bei ${ohneArt.length} Accessoires fehlt noch die Art (z. B. Tasche). Tippe sie an und trag sie nach, dann passen die Vorschläge besser.`;
 }
 
 // Die Filter-Knöpfe: "Alle" und jede Kategorie mit Anzahl
@@ -71,7 +79,7 @@ function baueKachel(teil) {
   const info = document.createElement("span");
   info.className = "kachel-info";
   info.textContent = [
-    nameVon(KATEGORIEN, teil.kategorie),
+    teil.art ? nameVon(ACCESSOIRE_ARTEN, teil.art) : nameVon(KATEGORIEN, teil.kategorie),
     nameVon(WAERME, teil.waerme),
     teil.regenfest ? "regenfest" : null,
   ].filter(Boolean).join(" · ");

@@ -228,7 +228,7 @@ function zeichneVorschlag(tag, vorschlag) {
   // Was fehlt noch?
   for (const hinweis of vorschlag.hinweise) {
     const p = document.createElement("p");
-    p.className = "vorschlag-hinweis";
+    p.className = "tipp-hinweis";
     p.textContent = hinweis;
     karte.append(p);
   }

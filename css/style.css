@@ -1035,17 +1035,17 @@ label.feld .feld-titel {
   margin-bottom: 4px;
 }
 
-/* Freundlicher Hinweis, was im Kleiderschrank noch fehlt */
-.vorschlag-hinweis {
-  margin: 0 0 10px;
+.vorschlag-karte .knopf-breit {
+  margin-top: 6px;
+}
+
+/* Freundliche Tipps: im Outfit, bei den Vorschlägen und im Kleiderschrank */
+.tipp-hinweis {
+  margin: 0 0 12px;
   padding: 10px 14px;
   border-radius: 14px;
   background: var(--flaeche);
   font-size: 15px;
-}
-
-.vorschlag-karte .knopf-breit {
-  margin-top: 6px;
 }
 
 /* ---------- Zuletzt getragen ---------- */

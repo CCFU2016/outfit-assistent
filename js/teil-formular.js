@@ -2,7 +2,7 @@
 
 import { teilLaden, teilSpeichern, teilLoeschen, neueId, bitteUmDauerhaftenSpeicher } from "./speicher.js";
 import { verkleinereFoto } from "./fotos.js";
-import { KATEGORIEN, WAERME, FARBEN, ANLAESSE } from "./daten.js";
+import { KATEGORIEN, ACCESSOIRE_ARTEN, WAERME, FARBEN, ANLAESSE } from "./daten.js";
 
 const formular = document.getElementById("teil-formular");
 const titel = document.getElementById("formular-titel");
@@ -14,6 +14,7 @@ const feldRegenfest = document.getElementById("feld-regenfest");
 const meldung = document.getElementById("formular-meldung");
 const knopfSpeichern = document.getElementById("knopf-speichern");
 const knopfLoeschen = document.getElementById("knopf-loeschen");
+const feldArt = document.getElementById("feld-art");
 
 let bisherigesTeil = null; // beim Bearbeiten: das Teil, wie es gespeichert ist
 let neueFotos = null;      // nach der Fotoauswahl: { foto, vorschau }
@@ -21,6 +22,7 @@ let fotoAdresse = null;    // Adresse für die Foto-Vorschau im Formular
 
 // ---------- Die Auswahl-Knöpfe aus den Listen in daten.js bauen ----------
 baueAuswahl("auswahl-kategorie", "kategorie", "radio", KATEGORIEN);
+baueAuswahl("auswahl-art", "art", "radio", ACCESSOIRE_ARTEN);
 baueAuswahl("auswahl-waerme", "waerme", "radio", WAERME);
 baueAuswahl("auswahl-farbe", "farbe", "radio", FARBEN);
 baueAuswahl("auswahl-anlaesse", "anlaesse", "checkbox", ANLAESSE);
@@ -77,9 +79,19 @@ export async function zeigeFormular(id) {
     waehleAus("waerme", bisherigesTeil.waerme);
     waehleAus("farbe", bisherigesTeil.farbe);
     for (const anlass of bisherigesTeil.anlaesse) waehleAus("anlaesse", anlass);
+    if (bisherigesTeil.art) waehleAus("art", bisherigesTeil.art);
   }
+  zeigeArtFeld();
   zeigeFoto(bisherigesTeil ? bisherigesTeil.foto : null);
 }
+
+// "Art" gibt es nur bei Accessoires
+function zeigeArtFeld() {
+  feldArt.hidden = gewaehlt("kategorie") !== "accessoire";
+}
+formular.addEventListener("change", (ereignis) => {
+  if (ereignis.target.name === "kategorie") zeigeArtFeld();
+});
 
 function waehleAus(feld, wert) {
   const eingabe = formular.querySelector(`input[name="${feld}"][value="${wert}"]`);
@@ -132,6 +144,7 @@ formular.addEventListener("submit", async (ereignis) => {
     waerme: gewaehlt("waerme"),
     regenfest: feldRegenfest.checked,
     farbe: gewaehlt("farbe"),
+    art: gewaehlt("kategorie") === "accessoire" ? gewaehlt("art") : null,
     anlaesse: [...formular.querySelectorAll('input[name="anlaesse"]:checked')].map((e) => e.value),
   };
 
@@ -140,6 +153,7 @@ formular.addEventListener("submit", async (ereignis) => {
   if (!neueFotos && !bisherigesTeil) fehlt.push("Foto");
   if (!eingaben.name) fehlt.push("Name");
   if (!eingaben.kategorie) fehlt.push("Kategorie");
+  if (eingaben.kategorie === "accessoire" && !eingaben.art) fehlt.push("Art des Accessoires");
   if (!eingaben.waerme) fehlt.push("Wärme");
   if (!eingaben.farbe) fehlt.push("Farbe");
   if (fehlt.length > 0) {

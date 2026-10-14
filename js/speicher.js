@@ -11,6 +11,7 @@
 //   waerme: "warm",
 //   regenfest: true,
 //   farbe: "gelb",
+//   art: "tasche",                nur bei Accessoires (siehe daten.js), sonst null
 //   anlaesse: ["schule", "alltag"],
 //   foto: (Bild, höchstens 1280 Pixel),
 //   vorschau: (kleines Bild für den Kleiderschrank),

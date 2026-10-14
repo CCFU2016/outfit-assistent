@@ -103,6 +103,8 @@
       <!-- Filter: nur eine Kategorie zeigen -->
       <div id="filter-leiste" class="filter-leiste" role="group" aria-label="Nach Kategorie filtern" hidden></div>
       <p id="filter-leer" class="klein" hidden></p>
+      <!-- Hinweis, wenn bei Accessoires noch die Art fehlt -->
+      <p id="art-fehlt" class="tipp-hinweis" hidden></p>
       <div id="teile-liste" class="teile-liste"></div>
     </section>
 
@@ -151,6 +153,12 @@
           <div id="auswahl-kategorie" class="chips"></div>
         </fieldset>
 
+        <!-- Art: nur bei Accessoires (z. B. Tasche) -->
+        <fieldset id="feld-art" class="feld" hidden>
+          <legend class="feld-titel">Art des Accessoires</legend>
+          <div id="auswahl-art" class="chips"></div>
+        </fieldset>
+
         <!-- Wärme: genau eine -->
         <fieldset class="feld">
           <legend class="feld-titel">Wärme</legend>
@@ -197,6 +205,8 @@
       <h2 class="bereich-titel">Dein Outfit</h2>
       <!-- Die gewählten Teile untereinander: oben → unten → Schuhe -->
       <div id="outfit-vorschau" class="karte outfit-karte"></div>
+      <!-- Tipps: passen die Farben? passt die Tasche? -->
+      <div id="outfit-tipps"></div>
 
       <!-- Hier erscheint bei Bedarf die Ort-Auswahl fürs Wetter -->
       <div id="outfit-ort" hidden></div>

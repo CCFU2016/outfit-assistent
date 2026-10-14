@@ -9,8 +9,11 @@
 //   − wurde am Tag davor schon vorgeschlagen oder kurz vorher getragen (für Abwechslung)
 //   − regenfeste Schuhe (z. B. Gummistiefel), wenn es trocken bleibt
 // Das Wetter zählt immer am meisten: Abwechslung gibt es nur zwischen Teilen, die gleich gut passen.
+// Danach kommen die Farben: Die App probiert alle Kombinationen durch und nimmt lieber eine
+// mit höchstens 2 Farben (siehe kombi.js). Bei Kälte kommt etwas Warmes dazu, sonst eine passende Tasche.
 
-import { KATEGORIEN, WAERME, ANLAESSE, OUTFIT_REIHENFOLGE, nameVon } from "./daten.js";
+import { KATEGORIEN, WAERME, ANLAESSE, FARBEN, OUTFIT_REIHENFOLGE, nameVon } from "./daten.js";
+import { MAX_FARBEN, farbenVon, farbStrafe, istTasche, tascheGehtZu, passendeTaschen, kombiTipps } from "./kombi.js";
 
 // Die Richtwerte aus dem Formular, bezogen auf die Höchsttemperatur des Tages
 export function passendeWaerme(tempMax) {
@@ -66,7 +69,7 @@ function vorschlagFuerTag(teile, tag, getragen, anlass, tagDavor, kuerzlichGetra
       else if (anlaesse.length > 0) p -= 1; // passt zu anderen Anlässen, aber nicht zu diesem
     }
     p += Math.min(aehnlich.get(teil.id) || 0, 3) * 0.7;
-    if (tagDavor.has(teil.id)) p -= 1;
+    if (tagDavor.has(teil.id)) p -= 0.5;
     if (kuerzlichGetragen.has(teil.id)) p -= 0.5;
     return p;
   }
@@ -80,18 +83,24 @@ function vorschlagFuerTag(teile, tag, getragen, anlass, tagDavor, kuerzlichGetra
       .sort((a, b) => b.punkte - a.punkte || a.teil.name.localeCompare(b.teil.name))[0];
   }
 
-  const gewaehlt = [];
+  // Die besten Kandidaten einer Kategorie (höchstens 6, damit das Durchprobieren schnell bleibt)
+  function kandidaten(kategorie, nurWenn = () => true) {
+    return teile
+      .filter((teil) => teil.kategorie === kategorie && nurWenn(teil))
+      .map((teil) => ({ teil, punkte: punkte(teil) }))
+      .sort((a, b) => b.punkte - a.punkte || a.teil.name.localeCompare(b.teil.name))
+      .slice(0, 6);
+  }
 
-  // 1. Oberteil + Hose/Rock oder ein Kleid
-  const oben = bestes("oberteil");
-  const unten = bestes("hose-rock");
-  const kleid = bestes("kleid");
-  if (oben && unten && (!kleid || kleid.punkte <= (oben.punkte + unten.punkte) / 2)) {
-    gewaehlt.push(oben, unten);
-  } else if (kleid) {
-    gewaehlt.push(kleid);
-  } else {
-    const fehlt = [!oben && "ein Oberteil", !unten && "eine Hose oder einen Rock"].filter(Boolean).join(" und ");
+  // 1. Unten herum: Oberteil + Hose/Rock oder ein Kleid
+  const oben = kandidaten("oberteil");
+  const unten = kandidaten("hose-rock");
+  const kleider = kandidaten("kleid");
+  const grundlagen = [];
+  for (const o of oben) for (const u of unten) grundlagen.push([o, u]);
+  for (const k of kleider) grundlagen.push([k]);
+  if (grundlagen.length === 0) {
+    const fehlt = [!oben.length && "ein Oberteil", !unten.length && "eine Hose oder einen Rock"].filter(Boolean).join(" und ");
     return {
       teile: [],
       gruende,
@@ -99,30 +108,61 @@ function vorschlagFuerTag(teile, tag, getragen, anlass, tagDavor, kuerzlichGetra
     };
   }
 
-  // 2. Jacke, wenn es kühl ist oder regnen soll
+  // 2. Jacke, wenn es kühl ist oder regnen soll, und Schuhe
   const jackeNoetig = waerme !== "leicht" || tag.regen;
-  if (jackeNoetig) {
-    const jacke = bestes("jacke");
-    if (jacke) {
-      gewaehlt.push(jacke);
-      if (tag.regen && jacke.teil.regenfest) gruende.push(`${jacke.teil.name}, weil sie regenfest ist.`);
-    } else {
-      hinweise.push(tag.regen ? "Es soll regnen, aber du hast noch keine Jacke angelegt." : "Es ist kühl, aber du hast noch keine Jacke angelegt.");
+  const jacken = jackeNoetig ? kandidaten("jacke") : [];
+  const schuhe = kandidaten("schuhe");
+
+  // 3. Alle Kombinationen durchprobieren. Gewinner: die meisten Punkte.
+  //    Reihenfolge der Wichtigkeit: falsche Wärme kostet 3, jede Farbe zu viel 2,5 (siehe kombi.js),
+  //    ein Teil vom Vortag 0,5. Also: Wetter vor Farben vor Abwechslung.
+  let beste = null;
+  for (const grundlage of grundlagen) {
+    // Ein Kleid ersetzt Oberteil und Hose, zählt also doppelt.
+    // Bei Gleichstand lieber Oberteil + Hose (darum der winzige Abzug).
+    const grundPunkte = grundlage.length === 1 ? grundlage[0].punkte * 2 - 0.01 : grundlage[0].punkte + grundlage[1].punkte;
+    for (const jacke of jacken.length ? jacken : [null]) {
+      for (const schuh of schuhe.length ? schuhe : [null]) {
+        const auswahl = [...grundlage, jacke, schuh].filter(Boolean);
+        const summe = grundPunkte + (jacke ? jacke.punkte : 0) + (schuh ? schuh.punkte : 0);
+        const imOutfit = auswahl.map(({ teil }) => teil);
+        // Kleiner Bonus, wenn eine eigene Tasche farblich dazu passt
+        const taschenBonus = anlass !== "sport" && passendeTaschen(imOutfit, teile).length ? 0.5 : 0;
+        const wert = summe - farbStrafe(imOutfit) * 2.5 + taschenBonus;
+        if (!beste || wert > beste.wert) beste = { auswahl, wert };
+      }
     }
-    if (tag.regen && jacke && !jacke.teil.regenfest) {
-      hinweise.push("Es soll regnen und du hast noch keine regenfeste Jacke. Nimm lieber einen Schirm mit! ☂️");
+  }
+  const gewaehlt = beste.auswahl;
+
+  const jacke = gewaehlt.find(({ teil }) => teil.kategorie === "jacke");
+  if (jackeNoetig && !jacke) {
+    hinweise.push(tag.regen ? "Es soll regnen, aber du hast noch keine Jacke angelegt." : "Es ist kühl, aber du hast noch keine Jacke angelegt.");
+  }
+  if (jacke && tag.regen && jacke.teil.regenfest) gruende.push(`${jacke.teil.name}, weil sie regenfest ist.`);
+  if (jacke && tag.regen && !jacke.teil.regenfest) {
+    hinweise.push("Es soll regnen und du hast noch keine regenfeste Jacke. Nimm lieber einen Schirm mit! ☂️");
+  }
+  if (!schuhe.length) hinweise.push("Du hast noch keine Schuhe angelegt.");
+
+  // 4. Accessoires: bei Kälte etwas Warmes (z. B. Mütze oder Schal), und eine passende Tasche
+  const imOutfit = () => gewaehlt.map(({ teil }) => teil);
+  if (waerme === "warm") {
+    const warm = kandidaten("accessoire", (teil) => teil.waerme === "warm" && !istTasche(teil))
+      .sort((a, b) => farbStrafe([...imOutfit(), a.teil]) - farbStrafe([...imOutfit(), b.teil]))[0];
+    if (warm) gewaehlt.push(warm);
+  }
+  if (anlass !== "sport") {
+    const tasche = kandidaten("accessoire", (teil) => istTasche(teil) && tascheGehtZu(teil, imOutfit()))[0];
+    if (tasche) {
+      gewaehlt.push(tasche);
+      gruende.push(`Die Tasche „${tasche.teil.name}“ passt farblich dazu.`);
     }
   }
 
-  // 3. Schuhe
-  const schuhe = bestes("schuhe");
-  if (schuhe) gewaehlt.push(schuhe);
-  else hinweise.push("Du hast noch keine Schuhe angelegt.");
-
-  // 4. Bei Kälte: ein warmes Accessoire (z. B. Mütze oder Schal), wenn es eins gibt
-  if (waerme === "warm") {
-    const accessoire = bestes("accessoire", (teil) => teil.waerme === "warm");
-    if (accessoire) gewaehlt.push(accessoire);
+  const farben = farbenVon(imOutfit());
+  if (farben.length <= MAX_FARBEN && farben.length > 0) {
+    gruende.push(`Farblich passt es: ${farben.map((farbe) => nameVon(FARBEN, farbe)).join(" und ")}.`);
   }
 
   // Wo gibt es noch gar nichts mit der passenden Wärme? Dann freundlich sagen, was fehlt.
@@ -140,6 +180,9 @@ function vorschlagFuerTag(teile, tag, getragen, anlass, tagDavor, kuerzlichGetra
   if (anlass && !gewaehlt.some(({ teil }) => (teil.anlaesse || []).includes(anlass))) {
     hinweise.push(`Für „${nameVon(ANLAESSE, anlass)}“ hast du noch keine Teile markiert.`);
   }
+
+  // Tipps zu Farben und Tasche (z. B. wenn der Kleiderschrank nicht genug passende Farben hat)
+  hinweise.push(...kombiTipps(imOutfit(), teile));
 
   const sortiert = gewaehlt
     .map(({ teil }) => teil)

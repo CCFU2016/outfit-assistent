@@ -9,7 +9,7 @@ import { zeigeFormular } from "./teil-formular.js";
 import { zeigeOutfit } from "./outfit.js";
 import { zeigeWetter } from "./wetter-seite.js";
 
-const VERSION = "0.7 (Wetter und Vorschläge)";
+const VERSION = "0.8 (Farben und Taschen passend kombinieren)";
 
 const TABS = ["kleiderschrank", "outfit", "wetter"];
 
