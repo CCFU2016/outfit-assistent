@@ -69,7 +69,7 @@ schon auf deinem Handy angekommen ist.
 - [x] 1.3 Wetter und Vorschläge für heute und die nächsten 4 Tage
 - [x] Farben und Taschen passend kombinieren (höchstens 3 Farben)
 - [x] Neuer Name „Mon Dressing Raffiné“ und neuer Look
-- [ ] Automatisch erkennen mit Claude (Sonnet): App und Server fertig, wartet auf die Einrichtung bei Railway
+- [x] Automatisch erkennen mit Claude (Sonnet), Server bei Railway
 - [ ] Anmeldung und Cloud (iPhone und iPad, automatisch gesichert)
 - [x] 1.4 Sicherung speichern und laden (iPhone: Teilen-Menü → „In Dateien sichern“, Android: Downloads)
 

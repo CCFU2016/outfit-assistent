@@ -8,7 +8,7 @@ import { einstellungLesen, einstellungSpeichern } from "./speicher.js";
 
 // Adresse des Servers bei Railway. Leer = die KI-Erkennung ist noch nicht eingerichtet
 // (dann zeigt die App nichts davon an).
-export const KI_ADRESSE = "";
+export const KI_ADRESSE = "https://outfit-assistent-production.up.railway.app";
 
 const WARTEN_MS = 30 * 1000; // so lange warten wir höchstens auf eine Antwort
 
