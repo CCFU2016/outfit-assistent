@@ -105,6 +105,25 @@ export function einstellungSpeichern(schluessel, wert) {
   return inSchublade("einstellungen", "readwrite", (schublade) => schublade.put(wert, schluessel));
 }
 
+// ---------- Sicherung laden (1.4) ----------
+// Schreibt viele Stücke, Looks und Einstellungen auf einmal.
+// Alles passiert in EINEM Vorgang: Klappt etwas nicht, wird gar nichts geändert.
+// Es wird nichts gelöscht: Gleiche Nummern werden ersetzt, alles andere bleibt.
+export async function sicherungEinspielen({ teile, getragen, einstellungen }) {
+  const db = await oeffneDatenbank();
+  return new Promise((fertig, fehler) => {
+    const vorgang = db.transaction(["teile", "getragen", "einstellungen"], "readwrite");
+    for (const teil of teile) vorgang.objectStore("teile").put(teil);
+    for (const eintrag of getragen) vorgang.objectStore("getragen").put(eintrag);
+    for (const [schluessel, wert] of Object.entries(einstellungen)) {
+      vorgang.objectStore("einstellungen").put(wert, schluessel);
+    }
+    vorgang.oncomplete = () => fertig();
+    vorgang.onerror = () => fehler(vorgang.error);
+    vorgang.onabort = () => fehler(vorgang.error);
+  });
+}
+
 // ---------- Hilfen ----------
 
 // Eine neue, eindeutige Nummer für ein Teil

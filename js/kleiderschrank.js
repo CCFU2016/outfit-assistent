@@ -3,6 +3,7 @@
 import { alleTeile } from "./speicher.js";
 import { KATEGORIEN, ACCESSOIRE_ARTEN, WAERME, nameVon } from "./daten.js";
 import { bildAdressen, fotoBild } from "./bilder.js";
+import { sicherungSpeichern, sicherungLesen, sicherungLaden, letzteSicherung } from "./sicherung.js";
 
 const liste = document.getElementById("teile-liste");
 const filterLeiste = document.getElementById("filter-leiste");
@@ -17,6 +18,7 @@ export async function zeigeKleiderschrank() {
   teile = await alleTeile();
   teile.sort((a, b) => b.erstelltAm.localeCompare(a.erstelltAm)); // neueste zuerst
   zeichne();
+  await zeichneSicherung();
 }
 
 function zeichne() {
@@ -86,4 +88,80 @@ function baueKachel(teil) {
 
   kachel.append(fotoBild(bilder.neu(teil.vorschau), teil.name), name, info);
   return kachel;
+}
+
+// ---------- Sicherung speichern und laden (die Arbeit macht sicherung.js) ----------
+const knopfSichern = document.getElementById("knopf-sichern");
+const sicherungDatei = document.getElementById("sicherung-datei");
+const sicherungStand = document.getElementById("sicherung-stand");
+const sicherungStatus = document.getElementById("sicherung-status");
+const sicherungFehler = document.getElementById("sicherung-fehler");
+const sicherungTipp = document.getElementById("sicherung-tipp");
+
+async function zeichneSicherung() {
+  knopfSichern.hidden = teile.length === 0; // ohne Stücke gibt es nichts zu sichern
+  sicherungTipp.hidden = teile.length === 0;
+  const zuletzt = await letzteSicherung();
+  sicherungStand.textContent = zuletzt
+    ? `Zuletzt gesichert: ${new Date(zuletzt).toLocaleDateString("de-DE", { day: "numeric", month: "numeric", year: "numeric" })}`
+    : teile.length ? "Noch nie gesichert." : "";
+}
+
+function zeigeSicherungStatus(text, istFehler = false) {
+  sicherungStatus.hidden = istFehler || !text;
+  sicherungFehler.hidden = !istFehler;
+  (istFehler ? sicherungFehler : sicherungStatus).textContent = text;
+}
+
+knopfSichern.addEventListener("click", async () => {
+  knopfSichern.disabled = true;
+  zeigeSicherungStatus("Einen Moment, ich packe alles zusammen …");
+  try {
+    const ergebnis = await sicherungSpeichern();
+    if (!ergebnis) {
+      zeigeSicherungStatus(""); // im Teilen-Menü abgebrochen
+    } else {
+      const was = `${anzahlText(ergebnis.anzahlTeile, "Stück", "Stücke")} und ${anzahlText(ergebnis.anzahlLooks, "Look", "Looks")}`;
+      zeigeSicherungStatus(ergebnis.geteilt
+        ? `Fertig: ${was}. Prüf in der App „Dateien“, ob die Sicherung dort angekommen ist.`
+        : `Fertig: ${was}. Die Datei ist im Ordner „Downloads“.`);
+    }
+  } catch (fehler) {
+    console.error(fehler);
+    zeigeSicherungStatus("Die Sicherung hat leider nicht geklappt. Versuch es bitte noch einmal.", true);
+  } finally {
+    knopfSichern.disabled = false;
+    await zeichneSicherung();
+  }
+});
+
+sicherungDatei.addEventListener("change", async () => {
+  const datei = sicherungDatei.files[0];
+  sicherungDatei.value = ""; // damit man dieselbe Datei noch einmal wählen kann
+  if (!datei) return;
+
+  try {
+    const sicherung = await sicherungLesen(datei);
+    const vom = sicherung.erstelltAm
+      ? ` vom ${new Date(sicherung.erstelltAm).toLocaleDateString("de-DE", { day: "numeric", month: "numeric", year: "numeric" })}`
+      : "";
+    const was = `${anzahlText(sicherung.teile.length, "Stück", "Stücke")} und ${anzahlText(sicherung.getragen.length, "Look", "Looks")}`;
+    if (!confirm(`Sicherung${vom} laden?\n\nDarin: ${was}.\nGleiche Stücke werden ersetzt. Es wird nichts gelöscht.`)) return;
+
+    zeigeSicherungStatus("Einen Moment, ich lade die Sicherung …");
+    await sicherungLaden(sicherung);
+    zeigeSicherungStatus(`Sicherung geladen: ${was}.` +
+      (sicherung.kaputt ? ` ${anzahlText(sicherung.kaputt, "Stück war", "Stücke waren")} beschädigt und fehlt.` : ""));
+    await zeigeKleiderschrank();
+  } catch (fehler) {
+    console.error(fehler);
+    zeigeSicherungStatus(fehler.message.startsWith("Das ist") || fehler.message.startsWith("Diese Sicherung")
+      ? fehler.message
+      : "Die Sicherung konnte nicht geladen werden. Ist der Speicher auf dem Handy voll?", true);
+  }
+});
+
+// "1 Stück", "3 Stücke"
+function anzahlText(anzahl, eins, mehrere) {
+  return `${anzahl} ${anzahl === 1 ? eins : mehrere}`;
 }

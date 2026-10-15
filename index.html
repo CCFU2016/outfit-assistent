@@ -107,6 +107,22 @@
       <!-- Hinweis, wenn bei Accessoires noch die Art fehlt -->
       <p id="art-fehlt" class="tipp-hinweis" hidden></p>
       <div id="teile-liste" class="teile-liste"></div>
+
+      <!-- Sicherung: alle Stücke, Fotos und Looks in einer Datei (siehe sicherung.js) -->
+      <div class="karte sicherung">
+        <h3 class="sicherung-titel">Sicherung</h3>
+        <p class="klein">Deine Stücke sind nur auf diesem Handy gespeichert. Mit einer Sicherung gehen sie nicht verloren, auch nicht bei einem neuen Handy.</p>
+        <p id="sicherung-stand" class="sicherung-stand"></p>
+        <button id="knopf-sichern" class="knopf knopf-haupt knopf-breit" type="button">Sicherung speichern</button>
+        <label class="knopf knopf-zweit knopf-breit">
+          Sicherung laden
+          <input id="sicherung-datei" class="unsichtbar" type="file">
+        </label>
+        <p id="sicherung-tipp" class="klein sicherung-tipp"><b>iPhone:</b> Im Teilen-Menü auf „In Dateien sichern“ tippen, z. B. in iCloud Drive.<br>
+          <b>Android:</b> Die Datei landet im Ordner „Downloads“.</p>
+        <p id="sicherung-status" class="status" role="status" hidden></p>
+        <p id="sicherung-fehler" class="meldung" role="alert" hidden></p>
+      </div>
     </section>
 
     <!-- Formular: Teil anlegen oder bearbeiten -->

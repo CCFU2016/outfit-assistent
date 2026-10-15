@@ -406,6 +406,36 @@ body.formular-offen .inhalt {
   opacity: 1;
 }
 
+/* ---------- Sicherung (unten in der Garderobe) ---------- */
+.sicherung {
+  margin-top: 28px;
+}
+
+.sicherung-titel {
+  margin: 0 0 6px;
+  font-family: var(--schrift-titel);
+  font-size: 21px;
+  font-weight: 500;
+}
+
+.sicherung .klein {
+  margin: 0 0 12px;
+}
+
+.sicherung-stand {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.sicherung .knopf + .knopf {
+  margin-top: 10px;
+}
+
+.sicherung-tipp {
+  margin-top: 12px !important;
+}
+
 /* ---------- Formular ---------- */
 .zurueck {
   display: inline-block;
