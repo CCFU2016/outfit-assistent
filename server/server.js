@@ -27,7 +27,15 @@ import * as z from "zod/v4";
 const MODELL = "claude-sonnet-5-5"; // fest: nicht teurer als Sonnet
 const PORT = Number(process.env.PORT) || 3000;
 const ZUGANGSCODE = process.env.ZUGANGSCODE || "";
-const ERLAUBTE_HERKUNFT = (process.env.ERLAUBTE_HERKUNFT || "https://ccfu2016.github.io").split(",").map((s) => s.trim());
+// Nur der Anfang der Adresse zählt ("https://ccfu2016.github.io"). Steht dort aus Versehen mehr,
+// z. B. "https://ccfu2016.github.io/outfit-assistent/", wird es hier abgeschnitten.
+const ERLAUBTE_HERKUNFT = (process.env.ERLAUBTE_HERKUNFT || "https://ccfu2016.github.io").split(",").map((eintrag) => {
+  try {
+    return new URL(eintrag.trim()).origin;
+  } catch {
+    return eintrag.trim();
+  }
+});
 const TAGESLIMIT = Number(process.env.TAGESLIMIT) || 100;
 const MAX_ANFRAGE_BYTES = 1.5 * 1024 * 1024; // das Vorschaubild hat meist unter 100 KB
 
@@ -145,8 +153,14 @@ const server = http.createServer(async (anfrage, antwort) => {
   if (anfrage.method === "OPTIONS") return antworte(antwort, herkunft, 204); // Vorab-Frage des Browsers
   if (anfrage.method !== "POST" || (pfad !== "/erkennen" && pfad !== "/pruefen")) return antworte(antwort, herkunft, 404, { fehler: "Gibt es nicht." });
 
-  if (herkunft && !ERLAUBTE_HERKUNFT.includes(herkunft)) return antworte(antwort, herkunft, 403, { fehler: "Nicht erlaubt." });
-  if (!codeStimmt(anfrage.headers["x-zugangscode"])) return antworte(antwort, herkunft, 401, { fehler: "Der Zugangscode stimmt nicht." });
+  if (herkunft && !ERLAUBTE_HERKUNFT.includes(herkunft)) {
+    console.log(`Abgelehnt: Anfrage von ${herkunft} (erlaubt ist nur ${ERLAUBTE_HERKUNFT.join(", ")})`);
+    return antworte(antwort, herkunft, 403, { fehler: "Nicht erlaubt." });
+  }
+  if (!codeStimmt(anfrage.headers["x-zugangscode"])) {
+    console.log("Abgelehnt: falscher Zugangscode"); // den Code selbst schreiben wir nie ins Protokoll
+    return antworte(antwort, herkunft, 401, { fehler: "Der Zugangscode stimmt nicht." });
+  }
 
   // Nur den Code prüfen (beim Einrichten in der App): kostet nichts und zählt nicht
   if (pfad === "/pruefen") {
@@ -178,4 +192,4 @@ const server = http.createServer(async (anfrage, antwort) => {
   }
 });
 
-server.listen(PORT, () => console.log(`Mon Dressing Server läuft auf Port ${PORT} (Modell ${MODELL}, Tageslimit ${TAGESLIMIT})`));
+server.listen(PORT, () => console.log(`Mon Dressing Server läuft auf Port ${PORT} (Modell ${MODELL}, Tageslimit ${TAGESLIMIT}, erlaubte App: ${ERLAUBTE_HERKUNFT.join(", ")})`));

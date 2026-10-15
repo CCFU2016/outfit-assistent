@@ -49,9 +49,10 @@ async function frageServer(pfad, code, inhalt) {
       signal: abbruch.signal,
     });
   } catch {
-    throw new Error(abbruch.signal.aborted
-      ? "Der Server hat zu lange gebraucht. Versuch es gleich noch einmal."
-      : "Keine Verbindung zum Server. Hast du Internet?");
+    // Der Browser verrät nicht genau, warum es nicht geklappt hat. Ob das Gerät online ist, wissen wir aber.
+    if (abbruch.signal.aborted) throw new Error("Der Server hat zu lange gebraucht. Versuch es gleich noch einmal.");
+    if (navigator.onLine === false) throw new Error("Du bist gerade offline. Für die Erkennung brauchst du Internet.");
+    throw new Error("Der Server für die Erkennung antwortet nicht. An deinem Internet liegt es wahrscheinlich nicht. Sag bitte einem Erwachsenen Bescheid.");
   } finally {
     clearTimeout(wecker);
   }
