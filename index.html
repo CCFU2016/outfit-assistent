@@ -108,6 +108,19 @@
       <p id="art-fehlt" class="tipp-hinweis" hidden></p>
       <div id="teile-liste" class="teile-liste"></div>
 
+      <!-- KI-Erkennung einrichten: Zugangscode einmal eintippen (siehe ki.js) -->
+      <div id="ki-karte" class="karte sicherung" hidden>
+        <h3 class="sicherung-titel">Automatisch erkennen</h3>
+        <p class="klein">Claude erkennt auf deinen Fotos Kategorie, Farbe, Wärme und einen Namen. Du kannst danach alles ändern.
+          Das Foto wird dafür an unseren Server und an Claude (Anthropic) geschickt. Unser Server speichert es nicht.</p>
+        <p id="ki-stand" class="sicherung-stand"></p>
+        <form id="ki-formular" class="stadt-formular">
+          <input id="ki-code" class="eingabe" type="password" autocomplete="off" placeholder="Zugangscode" aria-label="Zugangscode">
+          <button class="knopf knopf-haupt" type="submit">Speichern</button>
+        </form>
+        <p id="ki-meldung" class="meldung" role="alert" hidden></p>
+      </div>
+
       <!-- Sicherung: alle Stücke, Fotos und Looks in einer Datei (siehe sicherung.js) -->
       <div class="karte sicherung">
         <h3 class="sicherung-titel">Sicherung</h3>
@@ -153,6 +166,9 @@
               <input class="foto-eingabe unsichtbar" type="file" accept="image/*">
             </label>
           </div>
+          <!-- KI-Erkennung (nur sichtbar, wenn sie eingerichtet ist, siehe ki.js) -->
+          <button id="knopf-erkennen" class="knopf knopf-zweit knopf-breit knopf-erkennen" type="button" hidden>Automatisch erkennen</button>
+          <p id="ki-status" class="tipp-hinweis ki-status" role="status" hidden></p>
           <p class="tipp"><b>Foto-Tipp:</b> Leg das Stück flach auf einen einfarbigen Untergrund, der sich farblich abhebt.
             Fotografiere es ganz, von oben, bei Tageslicht ohne Blitz. Dann stimmen die Farben, und später
             kann die App den Hintergrund leicht entfernen.</p>

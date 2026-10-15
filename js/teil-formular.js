@@ -3,6 +3,7 @@
 import { teilLaden, teilSpeichern, teilLoeschen, neueId, bitteUmDauerhaftenSpeicher } from "./speicher.js";
 import { verkleinereFoto } from "./fotos.js";
 import { KATEGORIEN, ACCESSOIRE_ARTEN, WAERME, FARBEN, ANLAESSE } from "./daten.js";
+import { kiVorhanden, zugangscode, erkenne } from "./ki.js";
 
 const formular = document.getElementById("teil-formular");
 const titel = document.getElementById("formular-titel");
@@ -15,10 +16,13 @@ const meldung = document.getElementById("formular-meldung");
 const knopfSpeichern = document.getElementById("knopf-speichern");
 const knopfLoeschen = document.getElementById("knopf-loeschen");
 const feldArt = document.getElementById("feld-art");
+const knopfErkennen = document.getElementById("knopf-erkennen");
+const kiStatus = document.getElementById("ki-status");
 
 let bisherigesTeil = null; // beim Bearbeiten: das Teil, wie es gespeichert ist
 let neueFotos = null;      // nach der Fotoauswahl: { foto, vorschau }
 let fotoAdresse = null;    // Adresse für die Foto-Vorschau im Formular
+let erkennungNr = 0;       // zählt mit, damit eine alte, verspätete Antwort nichts mehr einträgt
 
 // ---------- Die Auswahl-Knöpfe aus den Listen in daten.js bauen ----------
 baueAuswahl("auswahl-kategorie", "kategorie", "radio", KATEGORIEN);
@@ -62,6 +66,8 @@ export async function zeigeFormular(id) {
   formular.reset();
   neueFotos = null;
   versteckeMeldung();
+  erkennungNr++;
+  zeigeKiStatus("");
 
   bisherigesTeil = id ? await teilLaden(id) : null;
   if (id && !bisherigesTeil) {
@@ -83,6 +89,7 @@ export async function zeigeFormular(id) {
   }
   zeigeArtFeld();
   zeigeFoto(bisherigesTeil ? bisherigesTeil.foto : null);
+  knopfErkennen.hidden = !kiVorhanden() || !bisherigesTeil;
 }
 
 // "Art" gibt es nur bei Accessoires
@@ -115,6 +122,7 @@ for (const eingabe of document.querySelectorAll(".foto-eingabe")) {
     try {
       neueFotos = await verkleinereFoto(datei);
       zeigeFoto(neueFotos.foto);
+      await nachDemFoto();
     } catch (fehler) {
       console.error(fehler);
       fotoPlatzhalterText.textContent = "Dieses Foto ging leider nicht. Probier ein anderes.";
@@ -132,6 +140,61 @@ function zeigeFoto(bild) {
   fotoPlatzhalterText.textContent = "Noch kein Foto";
   if (bild) fotoBild.src = fotoAdresse;
   else fotoBild.removeAttribute("src");
+}
+
+// ---------- Automatisch erkennen (KI, siehe ki.js) ----------
+// Nach einem neuen Foto: bei einem neuen Stück gleich erkennen lassen,
+// beim Bearbeiten nur den Knopf zeigen (damit nichts ungefragt überschrieben wird).
+async function nachDemFoto() {
+  if (!kiVorhanden()) return;
+  knopfErkennen.hidden = false;
+  if (!(await zugangscode())) {
+    zeigeKiStatus("Tipp: Richte unten in der Garderobe „Automatisch erkennen“ ein, dann füllt Claude das Formular für dich aus.");
+  } else if (!bisherigesTeil) {
+    await starteErkennung(false);
+  }
+}
+
+knopfErkennen.addEventListener("click", () => starteErkennung(true));
+
+// allesUeberschreiben: true beim Antippen des Knopfs; sonst bleibt ein schon getippter Name stehen
+async function starteErkennung(allesUeberschreiben) {
+  const bild = neueFotos ? neueFotos.vorschau : bisherigesTeil?.vorschau;
+  if (!bild) return;
+  const nummer = ++erkennungNr;
+  knopfErkennen.disabled = true;
+  zeigeKiStatus("Claude schaut sich dein Stück an …");
+  try {
+    const ergebnis = await erkenne(bild);
+    if (nummer !== erkennungNr) return; // inzwischen anderes Foto oder Formular verlassen
+    if (!ergebnis.istKleidung) {
+      zeigeKiStatus("Auf dem Foto erkenne ich kein Kleidungsstück. Trag die Angaben bitte selbst ein.");
+      return;
+    }
+    trageEin(ergebnis, allesUeberschreiben);
+    zeigeKiStatus(`Erkannt: ${ergebnis.name}. Prüf kurz, ob alles stimmt. Du kannst alles ändern.`);
+  } catch (fehler) {
+    if (nummer === erkennungNr) zeigeKiStatus(fehler.message, true);
+  } finally {
+    if (nummer === erkennungNr) knopfErkennen.disabled = false;
+  }
+}
+
+function trageEin(ergebnis, allesUeberschreiben) {
+  waehleAus("kategorie", ergebnis.kategorie);
+  if (ergebnis.art) waehleAus("art", ergebnis.art);
+  waehleAus("farbe", ergebnis.farbe);
+  waehleAus("waerme", ergebnis.waerme);
+  feldRegenfest.checked = ergebnis.regenfest;
+  if (allesUeberschreiben || !feldName.value.trim()) feldName.value = ergebnis.name.slice(0, 40);
+  zeigeArtFeld();
+  versteckeMeldung();
+}
+
+function zeigeKiStatus(text, istFehler = false) {
+  kiStatus.textContent = text;
+  kiStatus.hidden = !text;
+  kiStatus.classList.toggle("ki-fehler", istFehler);
 }
 
 // ---------- Speichern ----------

@@ -436,6 +436,20 @@ body.formular-offen .inhalt {
   margin-top: 12px !important;
 }
 
+/* Automatisch erkennen: Knopf und Hinweis unter den Foto-Knöpfen */
+.knopf-erkennen {
+  margin-top: 10px;
+}
+
+.ki-status {
+  margin: 10px 0 0;
+}
+
+.ki-status.ki-fehler {
+  background: #FBE3E1;
+  color: #8C1D18;
+}
+
 /* ---------- Formular ---------- */
 .zurueck {
   display: inline-block;

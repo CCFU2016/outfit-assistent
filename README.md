@@ -26,6 +26,8 @@ und lässt sich wie eine normale App auf den Startbildschirm legen.
 | `js/vorschlag.js` | Sucht den **Vorschlag** aus: Wetter vor Farben vor Abwechslung. |
 | `js/kombi.js` | Die **Farb-Regeln**: höchstens 3 Farben, passende Tasche. |
 | `js/sicherung.js` | **Sicherung**: alle Stücke, Fotos und Looks in eine Datei speichern und wieder laden. |
+| `js/ki.js` | **Automatisch erkennen**: schickt das Vorschaubild an unseren Server und füllt das Formular aus. |
+| `server/` | Der kleine **Server** bei Railway, der Claude fragt. Nur dort liegt der API-Schlüssel. Anleitung: `server/README.md`. |
 | `sw.js` | Der **Service Worker**: legt die App-Dateien auf dem Gerät ab, damit die App schnell und auch ohne Internet startet. |
 | `manifest.webmanifest` | Der **Steckbrief** der App: Name, Icon und Farben für den Startbildschirm. |
 | `fonts/` | Die Schriften **Bodoni Moda** (Überschriften) und **Jost** (Text). Sie liegen in der App selbst, es gibt keine Verbindung zu Google. |
@@ -67,6 +69,8 @@ schon auf deinem Handy angekommen ist.
 - [x] 1.3 Wetter und Vorschläge für heute und die nächsten 4 Tage
 - [x] Farben und Taschen passend kombinieren (höchstens 3 Farben)
 - [x] Neuer Name „Mon Dressing Raffiné“ und neuer Look
+- [ ] Automatisch erkennen mit Claude (Sonnet): App und Server fertig, wartet auf die Einrichtung bei Railway
+- [ ] Anmeldung und Cloud (iPhone und iPad, automatisch gesichert)
 - [x] 1.4 Sicherung speichern und laden (iPhone: Teilen-Menü → „In Dateien sichern“, Android: Downloads)
 
 ## Lizenzen

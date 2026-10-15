@@ -9,7 +9,7 @@ import { zeigeFormular } from "./teil-formular.js";
 import { zeigeOutfit } from "./outfit.js";
 import { zeigeWetter } from "./wetter-seite.js";
 
-const VERSION = "1.0 (Sicherung speichern und laden)";
+const VERSION = "1.1 (Automatisch erkennen, vorbereitet)";
 
 const TABS = ["kleiderschrank", "outfit", "wetter"];
 

@@ -4,6 +4,7 @@ import { alleTeile } from "./speicher.js";
 import { KATEGORIEN, ACCESSOIRE_ARTEN, WAERME, nameVon } from "./daten.js";
 import { bildAdressen, fotoBild } from "./bilder.js";
 import { sicherungSpeichern, sicherungLesen, sicherungLaden, letzteSicherung } from "./sicherung.js";
+import { kiVorhanden, zugangscode, zugangscodeSpeichern, codePruefen } from "./ki.js";
 
 const liste = document.getElementById("teile-liste");
 const filterLeiste = document.getElementById("filter-leiste");
@@ -19,6 +20,7 @@ export async function zeigeKleiderschrank() {
   teile.sort((a, b) => b.erstelltAm.localeCompare(a.erstelltAm)); // neueste zuerst
   zeichne();
   await zeichneSicherung();
+  await zeichneKi();
 }
 
 function zeichne() {
@@ -89,6 +91,37 @@ function baueKachel(teil) {
   kachel.append(fotoBild(bilder.neu(teil.vorschau), teil.name), name, info);
   return kachel;
 }
+
+// ---------- Automatisch erkennen: Zugangscode einrichten (die Arbeit macht ki.js) ----------
+const kiKarte = document.getElementById("ki-karte");
+const kiStand = document.getElementById("ki-stand");
+const kiFormular = document.getElementById("ki-formular");
+const kiCode = document.getElementById("ki-code");
+const kiMeldung = document.getElementById("ki-meldung");
+
+async function zeichneKi() {
+  kiKarte.hidden = !kiVorhanden();
+  if (!kiVorhanden()) return;
+  kiStand.textContent = (await zugangscode()) ? "Eingerichtet ✓" : "Noch nicht eingerichtet: Tippe einmal den Zugangscode ein.";
+}
+
+kiFormular.addEventListener("submit", async (ereignis) => {
+  ereignis.preventDefault();
+  const code = kiCode.value.trim();
+  if (!code) return;
+  kiMeldung.hidden = true;
+  kiStand.textContent = "Ich prüfe den Code …";
+  try {
+    const { uebrigHeute } = await codePruefen(code);
+    await zugangscodeSpeichern(code);
+    kiCode.value = "";
+    kiStand.textContent = `Eingerichtet ✓ Heute noch ${uebrigHeute} Erkennungen.`;
+  } catch (fehler) {
+    kiMeldung.textContent = fehler.message.startsWith("Der Zugangscode") ? "Der Zugangscode stimmt nicht." : fehler.message;
+    kiMeldung.hidden = false;
+    await zeichneKi();
+  }
+});
 
 // ---------- Sicherung speichern und laden (die Arbeit macht sicherung.js) ----------
 const knopfSichern = document.getElementById("knopf-sichern");

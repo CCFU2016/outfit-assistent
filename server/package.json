@@ -1,0 +1,18 @@
+{
+  "name": "mon-dressing-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Kleiner Server für Mon Dressing: erkennt Kleidung auf Fotos mit Claude (der API-Schlüssel bleibt hier)",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.134.0",
+    "zod": "^4.6.7"
+  }
+}
