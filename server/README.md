@@ -36,7 +36,7 @@ Er steht nie in der App, nie auf GitHub und gehört auch nie in einen Chat.
 5. **Testen:** Die Adresse im Browser öffnen. Dort muss stehen:
    `{"ok":true,"dienst":"Mon Dressing"}`
 6. **Claude die Adresse sagen** (nur die Adresse, nicht den Schlüssel und nicht den Code).
-   Sie kommt in `js/ki.js` (`KI_ADRESSE`). Danach erscheint in der App
+   Sie kommt in `js/verbindung.js` (`SERVER_ADRESSE`). Danach erscheint in der App
    unten in der Garderobe die Karte „Automatisch erkennen“. Dort tippt man den Zugangscode einmal ein.
 
 ## Anmeldung einschalten: Datenbank hinzufügen (einmalig)
