@@ -3,7 +3,7 @@
 import { teilLaden, teilSpeichern, teilLoeschen, neueId, bitteUmDauerhaftenSpeicher } from "./speicher.js";
 import { verkleinereFoto } from "./fotos.js";
 import { KATEGORIEN, ACCESSOIRE_ARTEN, WAERME, FARBEN, ANLAESSE } from "./daten.js";
-import { kiVorhanden, zugangscode, erkenne } from "./ki.js";
+import { kiVorhanden, kiBereit, erkenne } from "./ki.js";
 
 const formular = document.getElementById("teil-formular");
 const titel = document.getElementById("formular-titel");
@@ -148,7 +148,7 @@ function zeigeFoto(bild) {
 async function nachDemFoto() {
   if (!kiVorhanden()) return;
   knopfErkennen.hidden = false;
-  if (!(await zugangscode())) {
+  if (!(await kiBereit())) {
     zeigeKiStatus("Tipp: Richte unten in der Garderobe „Automatisch erkennen“ ein, dann füllt Claude das Formular für dich aus.");
   } else if (!bisherigesTeil) {
     await starteErkennung(false);

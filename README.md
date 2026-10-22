@@ -27,6 +27,8 @@ und lässt sich wie eine normale App auf den Startbildschirm legen.
 | `js/kombi.js` | Die **Farb-Regeln**: höchstens 3 Farben, passende Tasche. |
 | `js/sicherung.js` | **Sicherung**: alle Stücke, Fotos und Looks in eine Datei speichern und wieder laden. |
 | `js/ki.js` | **Automatisch erkennen**: schickt das Vorschaubild an unseren Server und füllt das Formular aus. |
+| `js/verbindung.js` | Adresse des **Servers** und verständliche Fehlermeldungen. |
+| `js/konto.js`, `js/anmeldung-seite.js` | **Anmeldung**: anmelden, Konto anlegen (nur mit Einladungscode), abmelden. Schalter `ANMELDUNG_PFLICHT`. |
 | `server/` | Der kleine **Server** bei Railway, der Claude fragt. Nur dort liegt der API-Schlüssel. Anleitung: `server/README.md`. |
 | `sw.js` | Der **Service Worker**: legt die App-Dateien auf dem Gerät ab, damit die App schnell und auch ohne Internet startet. |
 | `manifest.webmanifest` | Der **Steckbrief** der App: Name, Icon und Farben für den Startbildschirm. |

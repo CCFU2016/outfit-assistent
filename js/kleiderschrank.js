@@ -5,6 +5,7 @@ import { KATEGORIEN, ACCESSOIRE_ARTEN, WAERME, nameVon } from "./daten.js";
 import { bildAdressen, fotoBild } from "./bilder.js";
 import { sicherungSpeichern, sicherungLesen, sicherungLaden, letzteSicherung } from "./sicherung.js";
 import { kiVorhanden, zugangscode, zugangscodeSpeichern, codePruefen } from "./ki.js";
+import { sitzung, abmelden, anmeldungMoeglich, ANMELDUNG_PFLICHT } from "./konto.js";
 
 const liste = document.getElementById("teile-liste");
 const filterLeiste = document.getElementById("filter-leiste");
@@ -20,6 +21,7 @@ export async function zeigeKleiderschrank() {
   teile.sort((a, b) => b.erstelltAm.localeCompare(a.erstelltAm)); // neueste zuerst
   zeichne();
   await zeichneSicherung();
+  await zeichneKonto();
   await zeichneKi();
 }
 
@@ -92,6 +94,41 @@ function baueKachel(teil) {
   return kachel;
 }
 
+// ---------- Dein Konto (die Arbeit macht konto.js) ----------
+const kontoKarte = document.getElementById("konto-karte");
+const kontoStand = document.getElementById("konto-stand");
+const knopfZurAnmeldung = document.getElementById("knopf-zur-anmeldung");
+const knopfAbmelden = document.getElementById("knopf-abmelden");
+
+async function zeichneKonto() {
+  const aktuell = await sitzung();
+  if (aktuell) {
+    kontoKarte.hidden = false;
+    kontoStand.textContent = `Angemeldet als ${aktuell.email}`;
+    knopfAbmelden.hidden = false;
+    knopfZurAnmeldung.hidden = true;
+    return;
+  }
+  // Nicht angemeldet: Die Karte erscheint erst, wenn der Server die Anmeldung anbietet
+  const moeglich = await anmeldungMoeglich();
+  kontoKarte.hidden = !moeglich;
+  kontoStand.textContent = "Mit einem Konto ist deine Garderobe später auch auf dem iPad da.";
+  knopfAbmelden.hidden = true;
+  knopfZurAnmeldung.hidden = false;
+}
+
+knopfAbmelden.addEventListener("click", async () => {
+  const hinweis = ANMELDUNG_PFLICHT
+    ? "Abmelden? Danach musst du dich neu anmelden, um die App zu benutzen. Deine Stücke bleiben auf diesem Gerät."
+    : "Abmelden? Deine Stücke bleiben auf diesem Gerät.";
+  if (!confirm(hinweis)) return;
+  knopfAbmelden.disabled = true;
+  await abmelden();
+  knopfAbmelden.disabled = false;
+  if (ANMELDUNG_PFLICHT) location.hash = "#anmeldung";
+  else await zeigeKleiderschrank();
+});
+
 // ---------- Automatisch erkennen: Zugangscode einrichten (die Arbeit macht ki.js) ----------
 const kiKarte = document.getElementById("ki-karte");
 const kiStand = document.getElementById("ki-stand");
@@ -100,8 +137,9 @@ const kiCode = document.getElementById("ki-code");
 const kiMeldung = document.getElementById("ki-meldung");
 
 async function zeichneKi() {
-  kiKarte.hidden = !kiVorhanden();
-  if (!kiVorhanden()) return;
+  // Wer angemeldet ist, braucht keinen Zugangscode mehr
+  kiKarte.hidden = !kiVorhanden() || Boolean(await sitzung());
+  if (kiKarte.hidden) return;
   kiStand.textContent = (await zugangscode()) ? "Eingerichtet ✓" : "Noch nicht eingerichtet: Tippe einmal den Zugangscode ein.";
 }
 

@@ -450,6 +450,35 @@ body.formular-offen .inhalt {
   color: #8C1D18;
 }
 
+/* ---------- Anmeldung ---------- */
+.anmeldung-karte .feld {
+  margin-bottom: 16px;
+}
+
+.anmeldung-karte .klein {
+  display: block;
+  margin-top: 6px;
+}
+
+.anmeldung-karte .meldung {
+  margin: 0 0 16px;
+}
+
+.anmeldung-wechsel {
+  margin: 18px 0 0;
+  text-align: center;
+}
+
+.anmeldung-hilfe {
+  margin: 8px 0 0;
+  text-align: center;
+}
+
+.anmeldung-zurueck {
+  margin: 24px 0 0;
+  text-align: center;
+}
+
 /* ---------- Formular ---------- */
 .zurueck {
   display: inline-block;

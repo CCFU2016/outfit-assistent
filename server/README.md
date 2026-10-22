@@ -39,6 +39,23 @@ Er steht nie in der App, nie auf GitHub und gehört auch nie in einen Chat.
    Sie kommt in `js/ki.js` (`KI_ADRESSE`). Danach erscheint in der App
    unten in der Garderobe die Karte „Automatisch erkennen“. Dort tippt man den Zugangscode einmal ein.
 
+## Anmeldung einschalten: Datenbank hinzufügen (einmalig)
+
+1. Im Railway-Projekt: **+ Create** (oder **New**) → **Database** → **PostgreSQL**.
+2. Im **Server-Dienst** unter **Variables** eine neue Variable anlegen:
+   `DATABASE_URL` mit dem Wert `${{Postgres.DATABASE_URL}}`
+   (Railway bietet sie auch als „Reference Variable“ zum Auswählen an).
+3. Der Server startet neu und legt die Tabellen selbst an. Die Adresse im Browser zeigt dann
+   `"anmeldung":true`, und in der App erscheint unten in der Garderobe die Karte „Dein Konto“.
+4. Ein Konto anlegen geht nur mit dem **Einladungscode**. Das ist der `ZUGANGSCODE`.
+
+### Passwort vergessen (bis es das Zurücksetzen per E-Mail gibt)
+
+Solange in der Cloud noch keine Stücke gespeichert werden, geht dabei nichts verloren:
+1. Bei Railway die Postgres-Datenbank öffnen → **Data** → Tabelle `konten`.
+2. Die Zeile mit der E-Mail löschen (die Anmeldungen in `sitzungen` verschwinden automatisch mit).
+3. In der App mit derselben E-Mail ein neues Konto anlegen.
+
 ## In der Anthropic-Konsole (Notbremse)
 
 - Einen **eigenen API-Schlüssel** nur für diese App anlegen (z. B. „mon-dressing“).
@@ -62,7 +79,15 @@ npm install
 CLAUDE_API_SCHLUESSEL=… ZUGANGSCODE=… ERLAUBTE_HERKUNFT=http://localhost:8765 npm start
 ```
 
-Endpunkte (alle mit Kopfzeile `X-Zugangscode`):
+Mit Datenbank zusätzlich `DATABASE_URL=postgres://…` setzen.
+
+Endpunkte:
+- `GET /` → `{ ok, dienst, anmeldung }` (`anmeldung: true`, wenn die Datenbank verbunden ist)
+- `POST /konto/registrieren` mit `{ email, passwort, einladungscode }` → `{ token, email }`
+- `POST /konto/anmelden` mit `{ email, passwort }` → `{ token, email }`
+- `POST /konto/abmelden`, `GET /konto/ich` (mit `Authorization: Bearer <token>`)
+
+Erkennen und Prüfen (mit `Authorization: Bearer <token>` oder Kopfzeile `X-Zugangscode`):
 - `POST /erkennen` mit `{ "bild": "data:image/jpeg;base64,…" }` →
   `{ istKleidung, kategorie, art, farbe, waerme, regenfest, name, uebrigHeute }`
 - `POST /pruefen` → `{ ok: true, uebrigHeute }` (prüft nur den Code, kostet nichts)

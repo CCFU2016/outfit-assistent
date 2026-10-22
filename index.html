@@ -86,6 +86,34 @@
     <!-- Falls etwas schiefgeht, steht es hier -->
     <p id="app-fehler" class="meldung" role="alert" hidden></p>
 
+    <!-- Anmeldung (siehe konto.js und anmeldung-seite.js) -->
+    <section id="anmeldung" class="bereich" aria-labelledby="titel-anmeldung" hidden>
+      <h2 id="titel-anmeldung" class="bereich-titel">Anmelden</h2>
+      <p class="klein einleitung">Mit einem Konto ist deine Garderobe später auf all deinen Geräten da.</p>
+      <form id="anmeldung-formular" class="karte anmeldung-karte" novalidate>
+        <label class="feld">
+          <span class="feld-titel">E-Mail</span>
+          <input id="anmeldung-email" class="eingabe" type="email" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false">
+        </label>
+        <label class="feld">
+          <span class="feld-titel">Passwort</span>
+          <input id="anmeldung-passwort" class="eingabe" type="password" autocomplete="current-password">
+          <span id="anmeldung-passwort-hinweis" class="klein" hidden>Mindestens 8 Zeichen.</span>
+        </label>
+        <label id="feld-einladung" class="feld" hidden>
+          <span class="feld-titel">Einladungscode</span>
+          <input id="anmeldung-einladung" class="eingabe" type="password" autocomplete="off">
+          <span class="klein">Den Code bekommst du von deinen Eltern.</span>
+        </label>
+        <p id="anmeldung-meldung" class="meldung" role="alert" hidden></p>
+        <button id="anmeldung-knopf" class="knopf knopf-haupt knopf-breit" type="submit">Anmelden</button>
+      </form>
+      <p class="anmeldung-wechsel"><span id="anmeldung-frage">Noch kein Konto?</span>
+        <button id="anmeldung-wechsel" class="link-knopf" type="button">Konto anlegen</button></p>
+      <p class="klein anmeldung-hilfe">Passwort vergessen? Sag einem Erwachsenen Bescheid.</p>
+      <p class="anmeldung-zurueck"><a id="anmeldung-zurueck" href="#kleiderschrank" class="zurueck">‹ Zurück zur Garderobe</a></p>
+    </section>
+
     <!-- Bereich 1: Kleiderschrank -->
     <section id="kleiderschrank" class="bereich" aria-labelledby="titel-kleiderschrank">
       <div class="titel-zeile">
@@ -108,6 +136,14 @@
       <p id="art-fehlt" class="tipp-hinweis" hidden></p>
       <div id="teile-liste" class="teile-liste"></div>
 
+      <!-- Konto: angemeldet als … / Abmelden, oder Anmelden (siehe konto.js) -->
+      <div id="konto-karte" class="karte sicherung" hidden>
+        <h3 class="sicherung-titel">Dein Konto</h3>
+        <p id="konto-stand" class="sicherung-stand"></p>
+        <a id="knopf-zur-anmeldung" class="knopf knopf-haupt knopf-breit" href="#anmeldung" hidden>Anmelden oder Konto anlegen</a>
+        <button id="knopf-abmelden" class="knopf knopf-zweit knopf-breit" type="button" hidden>Abmelden</button>
+      </div>
+
       <!-- KI-Erkennung einrichten: Zugangscode einmal eintippen (siehe ki.js) -->
       <div id="ki-karte" class="karte sicherung" hidden>
         <h3 class="sicherung-titel">Automatisch erkennen</h3>
@@ -122,7 +158,7 @@
       </div>
 
       <!-- Sicherung: alle Stücke, Fotos und Looks in einer Datei (siehe sicherung.js) -->
-      <div class="karte sicherung">
+      <div id="sicherung-karte" class="karte sicherung">
         <h3 class="sicherung-titel">Sicherung</h3>
         <p class="klein">Deine Stücke sind nur auf diesem Handy gespeichert. Mit einer Sicherung gehen sie nicht verloren, auch nicht bei einem neuen Handy.</p>
         <p id="sicherung-stand" class="sicherung-stand"></p>

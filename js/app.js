@@ -8,8 +8,10 @@ import { zeigeKleiderschrank } from "./kleiderschrank.js";
 import { zeigeFormular } from "./teil-formular.js";
 import { zeigeOutfit } from "./outfit.js";
 import { zeigeWetter } from "./wetter-seite.js";
+import { zeigeAnmeldung } from "./anmeldung-seite.js";
+import { sitzung, ANMELDUNG_PFLICHT } from "./konto.js";
 
-const VERSION = "1.2.1 (bessere Fehlermeldung beim Erkennen)";
+const VERSION = "1.3 (Anmeldung vorbereitet)";
 
 const TABS = ["kleiderschrank", "outfit", "wetter"];
 
@@ -18,10 +20,20 @@ const TABS = ["kleiderschrank", "outfit", "wetter"];
 //   #kleiderschrank, #outfit, #wetter  → die drei Bereiche der Leiste unten
 //   #neues-teil                         → leeres Formular
 //   #teil/3f2a…                         → Formular mit dem Teil, das diese Nummer hat
+//   #anmeldung                          → Anmelden oder Konto anlegen
 async function zeigeSeite() {
   const ziel = decodeURIComponent(location.hash.slice(1)); // "#outfit" → "outfit"
-  const istFormular = ziel === "neues-teil" || ziel.startsWith("teil/");
-  const bereich = istFormular ? "formular" : TABS.includes(ziel) ? ziel : "kleiderschrank";
+  const angemeldet = Boolean(await sitzung());
+
+  // Anmelden: wenn es Pflicht ist und noch niemand angemeldet ist, oder wenn man es selbst aufruft
+  const istAnmeldung = (ANMELDUNG_PFLICHT && !angemeldet) || (ziel === "anmeldung" && !angemeldet);
+  if (ziel === "anmeldung" && angemeldet) {
+    location.replace("#kleiderschrank"); // schon angemeldet: weiter zur Garderobe
+    return;
+  }
+
+  const istFormular = !istAnmeldung && (ziel === "neues-teil" || ziel.startsWith("teil/"));
+  const bereich = istAnmeldung ? "anmeldung" : istFormular ? "formular" : TABS.includes(ziel) ? ziel : "kleiderschrank";
   const tab = istFormular ? "kleiderschrank" : bereich;
 
   // Nur der passende Bereich ist sichtbar
@@ -33,8 +45,8 @@ async function zeigeSeite() {
     if (eintrag.dataset.bereich === tab) eintrag.setAttribute("aria-current", "page");
     else eintrag.removeAttribute("aria-current");
   }
-  // Beim Formular blenden wir die Leiste unten aus
-  document.body.classList.toggle("formular-offen", istFormular);
+  // Beim Formular und bei der Anmeldung blenden wir die Leiste unten aus
+  document.body.classList.toggle("formular-offen", istFormular || istAnmeldung);
   window.scrollTo(0, 0);
 
   try {
@@ -42,6 +54,7 @@ async function zeigeSeite() {
     if (bereich === "outfit") await zeigeOutfit();
     if (bereich === "wetter") await zeigeWetter();
     if (istFormular) await zeigeFormular(ziel.startsWith("teil/") ? ziel.slice(5) : null);
+    if (istAnmeldung) zeigeAnmeldung();
     document.getElementById("app-fehler").hidden = true;
   } catch (fehler) {
     console.error(fehler);
