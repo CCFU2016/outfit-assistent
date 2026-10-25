@@ -8,8 +8,9 @@ import { einstellungLesen, einstellungSpeichern } from "./speicher.js";
 import { frageServer } from "./verbindung.js";
 
 // Schalter: Muss man sich anmelden, bevor man die App benutzen kann?
-// Erst einschalten, wenn die Datenbank beim Server eingerichtet ist (sonst kommt niemand mehr hinein).
-export const ANMELDUNG_PFLICHT = false;
+// Eingeschaltet, seit die Datenbank beim Server läuft und Veras Konto angelegt ist.
+// Wer einmal angemeldet ist, bleibt es auf dem Gerät, auch ohne Internet.
+export const ANMELDUNG_PFLICHT = true;
 
 // Ist die Anmeldung beim Server eingerichtet (gibt es die Datenbank)? Einmal pro Start gefragt.
 let moeglich = null;

@@ -72,8 +72,9 @@ schon auf deinem Handy angekommen ist.
 - [x] Farben und Taschen passend kombinieren (höchstens 3 Farben)
 - [x] Neuer Name „Mon Dressing Raffiné“ und neuer Look
 - [x] Automatisch erkennen mit Claude (Sonnet), Server bei Railway
-- [ ] Anmeldung und Cloud (iPhone und iPad, automatisch gesichert)
 - [x] 1.4 Sicherung speichern und laden (iPhone: Teilen-Menü → „In Dateien sichern“, Android: Downloads)
+- [x] Anmeldung: Konto nur mit Einladungscode, die App ist nur nach dem Anmelden nutzbar
+- [ ] Cloud: Stücke auf iPhone und iPad, automatisch gesichert
 
 ## Lizenzen
 

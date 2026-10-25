@@ -11,7 +11,7 @@ import { zeigeWetter } from "./wetter-seite.js";
 import { zeigeAnmeldung } from "./anmeldung-seite.js";
 import { sitzung, ANMELDUNG_PFLICHT } from "./konto.js";
 
-const VERSION = "1.3 (Anmeldung vorbereitet)";
+const VERSION = "1.4 (Anmeldung)";
 
 const TABS = ["kleiderschrank", "outfit", "wetter"];
 
