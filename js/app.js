@@ -3,6 +3,7 @@
 // 1. die richtige Seite zeigen (Kleiderschrank, Outfit, Wetter oder das Formular)
 // 2. auf dem Handy einen Tipp zum Installieren zeigen
 // 3. den Service Worker anmelden (damit die App auch ohne Internet startet)
+// 4. mit der Cloud abgleichen (siehe cloud.js)
 
 import { zeigeKleiderschrank } from "./kleiderschrank.js";
 import { zeigeFormular } from "./teil-formular.js";
@@ -10,8 +11,9 @@ import { zeigeOutfit } from "./outfit.js";
 import { zeigeWetter } from "./wetter-seite.js";
 import { zeigeAnmeldung } from "./anmeldung-seite.js";
 import { sitzung, ANMELDUNG_PFLICHT } from "./konto.js";
+import { abgleichen } from "./cloud.js";
 
-const VERSION = "1.4 (Anmeldung)";
+const VERSION = "1.5 (Cloud)";
 
 const TABS = ["kleiderschrank", "outfit", "wetter"];
 
@@ -109,9 +111,19 @@ function meldeServiceWorkerAn() {
   }
 }
 
+// ---------- 4. Cloud ----------
+// Kam vom anderen Gerät etwas Neues? Dann die Garderobe neu zeichnen.
+// (Andere Seiten zeigen es beim nächsten Öffnen. So geht nichts verloren, was man gerade eintippt.)
+window.addEventListener("cloud-geaendert", () => {
+  if (!document.getElementById("kleiderschrank").hidden) zeigeKleiderschrank();
+});
+// Gerade angemeldet, oder der Server kennt die Anmeldung nicht mehr: die passende Seite zeigen
+window.addEventListener("anmeldung-geaendert", zeigeSeite);
+
 // ---------- Los geht's ----------
 document.getElementById("version").textContent = VERSION;
 window.addEventListener("hashchange", zeigeSeite);
 zeigeSeite();
 zeigeInstallierTipp();
 meldeServiceWorkerAn();
+abgleichen().catch(() => {}); // Fehler (z. B. kein Internet) stehen unten in der Garderobe

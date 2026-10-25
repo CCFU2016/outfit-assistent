@@ -32,5 +32,21 @@ export async function tabellenAnlegen() {
       erstellt_am TIMESTAMPTZ NOT NULL DEFAULT now(),
       zuletzt_am  TIMESTAMPTZ NOT NULL DEFAULT now()
     );
+
+    -- Die Garderobe in der Cloud (siehe cloud.js): Stücke mit Fotos und „Heute getragen“
+    CREATE SEQUENCE IF NOT EXISTS cloud_stand;
+    CREATE TABLE IF NOT EXISTS cloud (
+      konto_id     BIGINT NOT NULL REFERENCES konten(id) ON DELETE CASCADE,
+      art          TEXT NOT NULL,              -- "teil" oder "getragen"
+      id           TEXT NOT NULL,              -- die Nummer aus der App
+      daten        JSONB,                      -- alle Angaben außer den Fotos (leer, wenn gelöscht)
+      foto         TEXT,                       -- nur bei Stücken: "data:image/jpeg;base64,…"
+      vorschau     TEXT,
+      geloescht    BOOLEAN NOT NULL DEFAULT false,
+      geaendert_am TIMESTAMPTZ NOT NULL,       -- wann es in der App geändert wurde: das Neueste gewinnt
+      stand        BIGINT NOT NULL,            -- fortlaufende Nummer: „Was ist neu seit meinem letzten Abgleich?“
+      PRIMARY KEY (konto_id, art, id)
+    );
+    CREATE INDEX IF NOT EXISTS cloud_nach_stand ON cloud (konto_id, stand);
   `);
 }

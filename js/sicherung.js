@@ -9,6 +9,7 @@
 import {
   alleTeile, alleGetragen, einstellungLesen, einstellungSpeichern, sicherungEinspielen,
 } from "./speicher.js";
+import { alsText, alsBild } from "./fotos.js";
 
 const APP_KENNUNG = "mon-dressing";  // so erkennt die App ihre eigenen Sicherungen
 const FORMAT = 1;                    // falls sich der Aufbau der Datei später ändert
@@ -107,26 +108,6 @@ export function letzteSicherung() {
 }
 
 // ---------- Hilfen ----------
-// Foto (Blob) → Text "data:image/jpeg;base64,…"
-function alsText(bild) {
-  return new Promise((fertig, fehler) => {
-    const leser = new FileReader();
-    leser.onload = () => fertig(leser.result);
-    leser.onerror = () => fehler(leser.error);
-    leser.readAsDataURL(bild);
-  });
-}
-
-// Text "data:image/jpeg;base64,…" → Foto (Blob)
-function alsBild(text) {
-  const treffer = /^data:([^;,]+);base64,(.*)$/s.exec(text);
-  if (!treffer) throw new Error("kein Foto");
-  const bytes = atob(treffer[2]);
-  const daten = new Uint8Array(bytes.length);
-  for (let i = 0; i < bytes.length; i++) daten[i] = bytes.charCodeAt(i);
-  return new Blob([daten], { type: treffer[1] });
-}
-
 // Heutiges Datum als "2026-10-15" (für den Dateinamen)
 function heute() {
   const jetzt = new Date();

@@ -2,6 +2,7 @@
 // Die Arbeit mit dem Server macht konto.js.
 
 import { anmelden, registrieren, ANMELDUNG_PFLICHT } from "./konto.js";
+import { abgleichen } from "./cloud.js";
 
 const formular = document.getElementById("anmeldung-formular");
 const titel = document.getElementById("titel-anmeldung");
@@ -65,7 +66,10 @@ formular.addEventListener("submit", async (ereignis) => {
     else await anmelden(email, passwort);
     formular.reset();
     neuesKonto = false;
-    location.hash = "#kleiderschrank";
+    // Zur Garderobe. Steht die Adresse schon auf #kleiderschrank, merkt der Browser keinen Wechsel: dann Bescheid sagen
+    if (location.hash === "#kleiderschrank") window.dispatchEvent(new Event("anmeldung-geaendert"));
+    else location.hash = "#kleiderschrank";
+    abgleichen().catch(() => {}); // Stücke aus der Cloud holen und die von hier hochladen
   } catch (fehler) {
     zeigeMeldung(fehler.message);
   } finally {

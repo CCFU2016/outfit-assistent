@@ -17,7 +17,7 @@ und lässt sich wie eine normale App auf den Startbildschirm legen.
 | `js/app.js` | Das **Verhalten**: wechselt zwischen den Bereichen, zeigt den Installier-Tipp, meldet den Service Worker an. |
 | `js/daten.js` | Die festen **Listen**: Kategorien, Arten von Accessoires, Wärme, Farben, Anlässe. |
 | `js/speicher.js` | Das **Speichern** in der Datenbank auf dem Gerät. Nur diese Datei ändert sich, wenn später die Cloud dazukommt. |
-| `js/fotos.js` | **Verkleinert** Fotos vor dem Speichern (ohne Filter, ohne Farbänderung). |
+| `js/fotos.js` | **Verkleinert** Fotos vor dem Speichern (ohne Filter, ohne Farbänderung) und wandelt sie in Text um und zurück. |
 | `js/kleiderschrank.js` | Die **Garderobe**: zeigt alle Stücke als Bilder, mit Filter. |
 | `js/teil-formular.js` | Das **Formular**: Stück anlegen, bearbeiten, löschen. |
 | `js/outfit.js` | **Look** zusammenstellen, „Look des Tages“ speichern, „Deine Looks“. |
@@ -29,7 +29,8 @@ und lässt sich wie eine normale App auf den Startbildschirm legen.
 | `js/ki.js` | **Automatisch erkennen**: schickt das Vorschaubild an unseren Server und füllt das Formular aus. |
 | `js/verbindung.js` | Adresse des **Servers** und verständliche Fehlermeldungen. |
 | `js/konto.js`, `js/anmeldung-seite.js` | **Anmeldung**: anmelden, Konto anlegen (nur mit Einladungscode), abmelden. Schalter `ANMELDUNG_PFLICHT`. |
-| `server/` | Der kleine **Server** bei Railway, der Claude fragt. Nur dort liegt der API-Schlüssel. Anleitung: `server/README.md`. |
+| `js/cloud.js` | **Cloud**: holt Änderungen der anderen Geräte und lädt die von hier hoch. Die neueste Änderung gewinnt. |
+| `server/` | Der kleine **Server** bei Railway: Anmeldung, Cloud und Claude fragen. Nur dort liegt der API-Schlüssel. Anleitung: `server/README.md`. |
 | `sw.js` | Der **Service Worker**: legt die App-Dateien auf dem Gerät ab, damit die App schnell und auch ohne Internet startet. |
 | `manifest.webmanifest` | Der **Steckbrief** der App: Name, Icon und Farben für den Startbildschirm. |
 | `fonts/` | Die Schriften **Bodoni Moda** (Überschriften) und **Jost** (Text). Sie liegen in der App selbst, es gibt keine Verbindung zu Google. |
@@ -74,7 +75,7 @@ schon auf deinem Handy angekommen ist.
 - [x] Automatisch erkennen mit Claude (Sonnet), Server bei Railway
 - [x] 1.4 Sicherung speichern und laden (iPhone: Teilen-Menü → „In Dateien sichern“, Android: Downloads)
 - [x] Anmeldung: Konto nur mit Einladungscode, die App ist nur nach dem Anmelden nutzbar
-- [ ] Cloud: Stücke auf iPhone und iPad, automatisch gesichert
+- [x] Cloud: Stücke, Fotos und „Heute getragen“ auf allen Geräten gleich (die neueste Änderung gewinnt)
 
 ## Lizenzen
 

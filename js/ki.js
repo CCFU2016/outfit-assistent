@@ -8,6 +8,7 @@
 import { einstellungLesen, einstellungSpeichern } from "./speicher.js";
 import { SERVER_ADRESSE, frageServer } from "./verbindung.js";
 import { sitzung, anmeldeKopf, sitzungVergessen } from "./konto.js";
+import { alsText } from "./fotos.js";
 
 // Gibt es überhaupt einen Server? (Sonst zeigt die App nichts von der KI-Erkennung an.)
 export function kiVorhanden() {
@@ -49,14 +50,4 @@ export async function erkenne(vorschau) {
     }
     throw new Error("Der Zugangscode stimmt nicht. Prüf ihn unten in der Garderobe.");
   }
-}
-
-// Foto (Blob) → Text "data:image/jpeg;base64,…"
-function alsText(bild) {
-  return new Promise((fertig, fehler) => {
-    const leser = new FileReader();
-    leser.onload = () => fertig(leser.result);
-    leser.onerror = () => fehler(leser.error);
-    leser.readAsDataURL(bild);
-  });
 }

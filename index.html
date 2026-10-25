@@ -89,7 +89,8 @@
     <!-- Anmeldung (siehe konto.js und anmeldung-seite.js) -->
     <section id="anmeldung" class="bereich" aria-labelledby="titel-anmeldung" hidden>
       <h2 id="titel-anmeldung" class="bereich-titel">Anmelden</h2>
-      <p class="klein einleitung">Mit einem Konto ist deine Garderobe später auf all deinen Geräten da.</p>
+      <p class="klein einleitung">Mit deinem Konto ist deine Garderobe auf all deinen Geräten da.
+        Dafür werden deine Stücke mit Fotos auf unserem Server in Europa gespeichert.</p>
       <form id="anmeldung-formular" class="karte anmeldung-karte" novalidate>
         <label class="feld">
           <span class="feld-titel">E-Mail</span>
@@ -140,6 +141,8 @@
       <div id="konto-karte" class="karte sicherung" hidden>
         <h3 class="sicherung-titel">Dein Konto</h3>
         <p id="konto-stand" class="sicherung-stand"></p>
+        <p id="cloud-stand" class="klein" hidden></p>
+        <button id="knopf-abgleichen" class="knopf knopf-zweit knopf-breit" type="button" hidden>Jetzt abgleichen</button>
         <a id="knopf-zur-anmeldung" class="knopf knopf-haupt knopf-breit" href="#anmeldung" hidden>Anmelden oder Konto anlegen</a>
         <button id="knopf-abmelden" class="knopf knopf-zweit knopf-breit" type="button" hidden>Abmelden</button>
       </div>
@@ -160,7 +163,7 @@
       <!-- Sicherung: alle Stücke, Fotos und Looks in einer Datei (siehe sicherung.js) -->
       <div id="sicherung-karte" class="karte sicherung">
         <h3 class="sicherung-titel">Sicherung</h3>
-        <p class="klein">Deine Stücke sind nur auf diesem Handy gespeichert. Mit einer Sicherung gehen sie nicht verloren, auch nicht bei einem neuen Handy.</p>
+        <p class="klein">Zusätzlich zur Cloud kannst du alle Stücke als Datei sichern, z. B. in iCloud Drive. Doppelt hält besser.</p>
         <p id="sicherung-stand" class="sicherung-stand"></p>
         <button id="knopf-sichern" class="knopf knopf-haupt knopf-breit" type="button">Sicherung speichern</button>
         <label class="knopf knopf-zweit knopf-breit">

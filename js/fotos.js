@@ -1,4 +1,4 @@
-// fotos.js – Fotos verkleinern, bevor sie gespeichert werden
+// fotos.js – Fotos verkleinern, bevor sie gespeichert werden (und Fotos in Text umwandeln und zurück)
 // Wichtig: Wir ändern nur die Größe. Keine Filter, keine Farbänderung.
 
 const GROSS = 1280; // längste Seite des gespeicherten Fotos (in Pixeln)
@@ -50,4 +50,24 @@ function alsJpeg(leinwand, qualitaet) {
       qualitaet
     );
   });
+}
+
+// Foto (Blob) → Text "data:image/jpeg;base64,…" (für Sicherung, Cloud und Erkennen)
+export function alsText(bild) {
+  return new Promise((fertig, fehler) => {
+    const leser = new FileReader();
+    leser.onload = () => fertig(leser.result);
+    leser.onerror = () => fehler(leser.error);
+    leser.readAsDataURL(bild);
+  });
+}
+
+// Text "data:image/jpeg;base64,…" → Foto (Blob)
+export function alsBild(text) {
+  const treffer = /^data:([^;,]+);base64,(.*)$/s.exec(text);
+  if (!treffer) throw new Error("kein Foto");
+  const bytes = atob(treffer[2]);
+  const daten = new Uint8Array(bytes.length);
+  for (let i = 0; i < bytes.length; i++) daten[i] = bytes.charCodeAt(i);
+  return new Blob([daten], { type: treffer[1] });
 }

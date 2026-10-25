@@ -6,6 +6,7 @@ import { bildAdressen, fotoBild } from "./bilder.js";
 import { sicherungSpeichern, sicherungLesen, sicherungLaden, letzteSicherung } from "./sicherung.js";
 import { kiVorhanden, zugangscode, zugangscodeSpeichern, codePruefen } from "./ki.js";
 import { sitzung, abmelden, anmeldungMoeglich, ANMELDUNG_PFLICHT } from "./konto.js";
+import { abgleichen, cloudZustand } from "./cloud.js";
 
 const liste = document.getElementById("teile-liste");
 const filterLeiste = document.getElementById("filter-leiste");
@@ -94,17 +95,21 @@ function baueKachel(teil) {
   return kachel;
 }
 
-// ---------- Dein Konto (die Arbeit macht konto.js) ----------
+// ---------- Dein Konto und die Cloud (die Arbeit machen konto.js und cloud.js) ----------
 const kontoKarte = document.getElementById("konto-karte");
 const kontoStand = document.getElementById("konto-stand");
+const cloudStand = document.getElementById("cloud-stand");
+const knopfAbgleichen = document.getElementById("knopf-abgleichen");
 const knopfZurAnmeldung = document.getElementById("knopf-zur-anmeldung");
 const knopfAbmelden = document.getElementById("knopf-abmelden");
 
 async function zeichneKonto() {
   const aktuell = await sitzung();
+  cloudStand.hidden = knopfAbgleichen.hidden = !aktuell;
   if (aktuell) {
     kontoKarte.hidden = false;
     kontoStand.textContent = `Angemeldet als ${aktuell.email}`;
+    zeichneCloud();
     knopfAbmelden.hidden = false;
     knopfZurAnmeldung.hidden = true;
     return;
@@ -112,10 +117,27 @@ async function zeichneKonto() {
   // Nicht angemeldet: Die Karte erscheint erst, wenn der Server die Anmeldung anbietet
   const moeglich = await anmeldungMoeglich();
   kontoKarte.hidden = !moeglich;
-  kontoStand.textContent = "Mit einem Konto ist deine Garderobe später auch auf dem iPad da.";
+  kontoStand.textContent = "Mit einem Konto ist deine Garderobe auf all deinen Geräten da.";
   knopfAbmelden.hidden = true;
   knopfZurAnmeldung.hidden = false;
 }
+
+// Zeigt, ob alles in der Cloud ist
+function zeichneCloud() {
+  const { laeuft, zuletzt, fehler } = cloudZustand();
+  knopfAbgleichen.disabled = laeuft;
+  if (laeuft) cloudStand.textContent = "Wird mit der Cloud abgeglichen …";
+  else if (fehler) cloudStand.textContent = `Noch nicht abgeglichen: ${fehler}`;
+  else if (zuletzt) cloudStand.textContent = `In der Cloud abgeglichen um ${uhrzeit(zuletzt)} Uhr.`;
+  else cloudStand.textContent = "Noch nicht mit der Cloud abgeglichen.";
+}
+
+function uhrzeit(zeit) {
+  return new Date(zeit).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+}
+
+window.addEventListener("cloud-zustand", zeichneCloud);
+knopfAbgleichen.addEventListener("click", () => abgleichen().catch(() => {}));
 
 knopfAbmelden.addEventListener("click", async () => {
   const hinweis = ANMELDUNG_PFLICHT

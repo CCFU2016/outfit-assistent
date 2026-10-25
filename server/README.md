@@ -1,8 +1,10 @@
-# Mon Dressing – Server für „Automatisch erkennen“
+# Mon Dressing – Server für Anmeldung, Cloud und „Automatisch erkennen“
 
-Dieser kleine Server ist der „Türsteher“ zwischen der App und Claude:
-Die App schickt das Foto eines Kleidungsstücks, der Server fragt Claude (Modell **Sonnet**)
-und schickt Kategorie, Farbe, Wärme, regenfest und einen Namen zurück.
+Dieser kleine Server ist der „Türsteher“ zwischen der App, der Datenbank und Claude:
+- **Anmeldung:** Konten (nur mit Einladungscode).
+- **Cloud:** Speichert die Stücke mit Fotos und „Heute getragen“, damit sie auf allen Geräten gleich sind.
+- **Erkennen:** Die App schickt das Foto eines Kleidungsstücks, der Server fragt Claude (Modell **Sonnet**)
+  und schickt Kategorie, Farbe, Wärme, regenfest und einen Namen zurück.
 
 **Der API-Schlüssel liegt nur hier auf dem Server** (bei Railway als Variable).
 Er steht nie in der App, nie auf GitHub und gehört auch nie in einen Chat.
@@ -51,10 +53,20 @@ Er steht nie in der App, nie auf GitHub und gehört auch nie in einen Chat.
 
 ### Passwort vergessen (bis es das Zurücksetzen per E-Mail gibt)
 
-Solange in der Cloud noch keine Stücke gespeichert werden, geht dabei nichts verloren:
 1. Bei Railway die Postgres-Datenbank öffnen → **Data** → Tabelle `konten`.
-2. Die Zeile mit der E-Mail löschen (die Anmeldungen in `sitzungen` verschwinden automatisch mit).
+2. Die Zeile mit der E-Mail löschen. Damit verschwinden auch die Anmeldungen (`sitzungen`)
+   **und die Cloud-Kopie** (`cloud`) dieses Kontos.
 3. In der App mit derselben E-Mail ein neues Konto anlegen.
+4. Die Stücke auf den Geräten bleiben erhalten. Beim ersten Abgleich mit dem neuen Konto lädt jedes Gerät
+   seine Stücke wieder hoch. Dafür muss sich jedes Gerät einmal neu anmelden.
+
+## Die Cloud
+
+- Tabelle `cloud`: pro Konto jedes Stück (mit Foto und Vorschaubild als Text) und jeder „Heute getragen“-Tag.
+- Gibt es dasselbe Stück auf zwei Geräten verschieden, **gewinnt die neueste Änderung**.
+- Gelöschtes bleibt als „gelöscht“ stehen (ohne Fotos), damit es auch auf den anderen Geräten verschwindet.
+- **Sicherung der Datenbank:** Bei Railway beim Postgres-Dienst unter **Backups** regelmäßige Sicherungen
+  einschalten (falls es das in eurem Tarif gibt). Zusätzlich kann man in der App eine Sicherung als Datei speichern.
 
 ## In der Anthropic-Konsole (Notbremse)
 
@@ -86,6 +98,12 @@ Endpunkte:
 - `POST /konto/registrieren` mit `{ email, passwort, einladungscode }` → `{ token, email }`
 - `POST /konto/anmelden` mit `{ email, passwort }` → `{ token, email }`
 - `POST /konto/abmelden`, `GET /konto/ich` (mit `Authorization: Bearer <token>`)
+
+Cloud (mit `Authorization: Bearer <token>`):
+- `POST /cloud/speichern` mit `{ art: "teil"|"getragen", id, geaendertAm, daten, foto, vorschau }`
+  oder `{ art, id, geaendertAm, geloescht: true }` → `{ uebernommen }` (false, wenn schon Neueres da ist)
+- `GET /cloud/aenderungen?seit=<stand>` → `{ konto, eintraege: [{ art, id, daten, geloescht, geaendertAm }], stand, mehr }`
+- `GET /cloud/fotos?id=<id>` → `{ foto, vorschau }` (als `data:image/jpeg;base64,…`)
 
 Erkennen und Prüfen (mit `Authorization: Bearer <token>` oder Kopfzeile `X-Zugangscode`):
 - `POST /erkennen` mit `{ "bild": "data:image/jpeg;base64,…" }` →

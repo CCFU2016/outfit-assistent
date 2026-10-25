@@ -3,6 +3,7 @@
 // Teile:
 //   erkennen.js   Claude fragt, was auf dem Foto ist (der API-Schlüssel bleibt hier auf dem Server)
 //   konten.js     Konto anlegen, anmelden, abmelden
+//   cloud.js      die Garderobe in der Cloud (Stücke mit Fotos, „Heute getragen“)
 //   datenbank.js  Verbindung zur Datenbank bei Railway
 //
 // Schutz gegen fremde Nutzung:
@@ -26,6 +27,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { MODELL, erkenne } from "./erkennen.js";
 import { datenbankVorhanden, tabellenAnlegen } from "./datenbank.js";
 import { KontoFehler, registrieren, anmelden, abmelden, kontoZumToken, bremse, fehlversuch } from "./konten.js";
+import { speichern, aenderungen, fotos } from "./cloud.js";
 
 const PORT = Number(process.env.PORT) || 3000;
 const ZUGANGSCODE = process.env.ZUGANGSCODE || "";
@@ -40,6 +42,7 @@ const ERLAUBTE_HERKUNFT = (process.env.ERLAUBTE_HERKUNFT || "https://ccfu2016.gi
 });
 const TAGESLIMIT = Number(process.env.TAGESLIMIT) || 100;
 const MAX_ANFRAGE_BYTES = 1.5 * 1024 * 1024; // das Vorschaubild hat meist unter 100 KB
+const MAX_CLOUD_BYTES = 5 * 1024 * 1024;    // ein Stück mit großem Foto hat meist unter 1 MB
 
 if (!process.env.CLAUDE_API_SCHLUESSEL || !ZUGANGSCODE) {
   console.error("Es fehlen Variablen: CLAUDE_API_SCHLUESSEL und ZUGANGSCODE müssen bei Railway eingetragen sein.");
@@ -89,25 +92,25 @@ function antworte(antwort, herkunft, status, inhalt) {
   antwort.end(inhalt === undefined ? "" : JSON.stringify(inhalt));
 }
 
-function leseKoerper(anfrage) {
+function leseKoerper(anfrage, maxBytes) {
   return new Promise((fertig, fehler) => {
     const teile = [];
     let groesse = 0;
     anfrage.on("data", (stueck) => {
       groesse += stueck.length;
-      if (groesse <= MAX_ANFRAGE_BYTES) teile.push(stueck); // zu viel? Den Rest bis zum Ende nur überspringen,
-      else if (groesse > 10 * MAX_ANFRAGE_BYTES) anfrage.destroy(); // damit die App eine Antwort bekommt (bei Unsinn: auflegen)
+      if (groesse <= maxBytes) teile.push(stueck); // zu viel? Den Rest bis zum Ende nur überspringen,
+      else if (groesse > 10 * maxBytes) anfrage.destroy(); // damit die App eine Antwort bekommt (bei Unsinn: auflegen)
     });
-    anfrage.on("end", () => (groesse > MAX_ANFRAGE_BYTES
+    anfrage.on("end", () => (groesse > maxBytes
       ? fehler(new KontoFehler(413, "Das ist zu groß."))
       : fertig(Buffer.concat(teile).toString("utf8"))));
     anfrage.on("error", fehler);
   });
 }
 
-async function leseJson(anfrage) {
+async function leseJson(anfrage, maxBytes = MAX_ANFRAGE_BYTES) {
   try {
-    return JSON.parse((await leseKoerper(anfrage)) || "{}");
+    return JSON.parse((await leseKoerper(anfrage, maxBytes)) || "{}");
   } catch (fehler) {
     if (fehler instanceof KontoFehler) throw fehler;
     throw new KontoFehler(400, "Die Anfrage ist kaputt.");
@@ -126,6 +129,18 @@ async function darfErkennen(anfrage, ip) {
 
 function brauchtDatenbank() {
   if (!datenbankVorhanden) throw new KontoFehler(503, "Die Anmeldung ist auf dem Server noch nicht eingerichtet.");
+}
+
+// Wer fragt? Das Konto zum Anmelde-Schlüssel, sonst „Bitte melde dich neu an“
+async function angemeldetesKonto(anfrage) {
+  brauchtDatenbank();
+  const konto = await kontoZumToken(tokenVon(anfrage));
+  if (!konto) throw new KontoFehler(401, "Bitte melde dich neu an.");
+  return konto;
+}
+
+function suchwert(anfrage, name) {
+  return new URL(anfrage.url, "http://x").searchParams.get(name);
 }
 
 // ---------- Die einzelnen Adressen ----------
@@ -149,10 +164,25 @@ const wege = {
   },
 
   "GET /konto/ich": async (anfrage) => {
-    brauchtDatenbank();
-    const konto = await kontoZumToken(tokenVon(anfrage));
-    if (!konto) throw new KontoFehler(401, "Bitte melde dich neu an.");
+    const konto = await angemeldetesKonto(anfrage);
     return [200, { email: konto.email }];
+  },
+
+  // ---------- Cloud (nur angemeldet) ----------
+  "POST /cloud/speichern": async (anfrage) => {
+    const konto = await angemeldetesKonto(anfrage);
+    return [200, await speichern(konto.id, await leseJson(anfrage, MAX_CLOUD_BYTES))];
+  },
+
+  "GET /cloud/aenderungen": async (anfrage) => {
+    const konto = await angemeldetesKonto(anfrage);
+    const seit = Math.max(0, Math.floor(Number(suchwert(anfrage, "seit")) || 0));
+    return [200, await aenderungen(konto.id, seit)];
+  },
+
+  "GET /cloud/fotos": async (anfrage) => {
+    const konto = await angemeldetesKonto(anfrage);
+    return [200, await fotos(konto.id, suchwert(anfrage, "id"))];
   },
 
   // Nur prüfen, ob man erkennen darf (beim Einrichten in der App): kostet nichts und zählt nicht
