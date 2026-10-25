@@ -3,13 +3,15 @@
 // Die Figur ist eine Zeichnung (SVG), keine Foto-Aufnahme. Man wählt nur aus:
 // Hautton, Haarfarbe, Frisur und Augenfarbe.
 // Natürliche Proportionen (etwa 7,5 Kopflängen), keine übertrieben dünne Modezeichnung.
+// Grundkleidung: ein schlichter, sportlicher BH und ein Slip in einem hellen Champagner-Ton.
 //
 // Die Zeichnung hat Ebenen, damit die Kleidung später dazwischen passt:
 //   hinten   Haare hinter dem Körper
 //   koerper  Haut, Gesicht
-//   basis    schlichtes Top und Shorts
-//   (hier kommt später die Kleidung)
+//   basis    schlichter BH und Slip
+//   kleidung die Stücke (siehe puppe-ansicht.js)
 //   vorne    Haare vor dem Gesicht und über den Schultern
+//   obenauf  was über den Haaren liegt: Mütze, Schal, Tasche
 
 export const HAUTTOENE = [
   { wert: "sehr-hell", name: "Sehr hell", farbe: "#F7E3D6", linie: "#D9B5A0" },
@@ -31,7 +33,9 @@ export const HAARFARBEN = [
 
 export const FRISUREN = [
   { wert: "lang", name: "Lang" },
+  { wert: "schulterlang", name: "Schulterlang" },
   { wert: "bob", name: "Kurz (Bob)" },
+  { wert: "blowout", name: "Blow-out" },
   { wert: "zopf", name: "Zopf" },
   { wert: "locken", name: "Locken" },
   { wert: "dutt", name: "Dutt" },
@@ -51,8 +55,7 @@ export const STANDARD_AUSSEHEN = { haut: "hell", haare: "dunkelbraun", frisur: "
 export const BREITE = 300;
 export const HOEHE = 760;
 
-const BASIS = { farbe: "#EEE9E2", linie: "#CFC8BE" };  // Top: hell und schlicht
-const SHORTS_FARBE = "#DCD5CB";                          // Shorts: etwas dunkler, damit man zwei Teile sieht
+const BASIS = { farbe: "#E9E0D4", linie: "#C9BCAB", band: "#DACBB8" }; // BH und Slip: heller Champagner-Ton
 
 function finde(liste, wert) {
   return liste.find((eintrag) => eintrag.wert === wert) || liste[0];
@@ -91,27 +94,30 @@ const RUMPF = symmetrisch([150, 158], [
   [93, 178, 95, 196, 104, 208],
   [108, 232, 111, 254, 116, 282],
   [118, 302, 105, 324, 100, 352],
-  [99, 360, 100, 366, 100, 372],
-  [112, 390, 136, 394, 150, 394],
+  [108, 358, 130, 372, 150, 380], // unten ein Bogen, den der Slip verdeckt
 ]);
 const HALS = "M139,124 L139,160 Q150,168 161,160 L161,124 Z";
 const KOPF = "M150,48 C172,48 186,64 186,90 C186,112 177,127 163,134 C157,137 143,137 137,134 C123,127 114,112 114,90 C114,64 128,48 150,48 Z";
 const OHR = "M115,86 C109,84 108,98 112,104 C114,107 117,105 117,102 Z";
 
-// Schlichtes Top (mit Trägern) und Shorts
-const TOP = symmetrisch([150, 200], [
-  [142, 200, 134, 198, 128, 196],
+// Schlichter BH (sportlich, mit Trägern und Unterbrustband) und Slip
+const BH = symmetrisch([150, 210], [
+  [142, 208, 134, 200, 128, 196],
   [120, 200, 112, 204, 106, 206],
-  [109, 230, 111, 254, 116, 284],
-  [128, 286, 140, 288, 150, 288],
+  [107, 216, 108, 228, 110, 238],
+  [124, 240, 138, 240, 150, 240],
 ]);
-const TRAEGER = "M126,197 L130,158 L135,158 L131,197 Z";
-const SHORTS = symmetrisch([150, 284], [
-  [134, 284, 122, 283, 116, 280],
-  [118, 302, 105, 324, 100, 352],
-  [99, 362, 99, 372, 100, 384],
-  [114, 386, 130, 388, 145, 392],
-  [147, 388, 148, 386, 150, 384],
+const BH_BAND = symmetrisch([150, 232], [
+  [136, 232, 121, 231, 109, 229],
+  [109, 232, 110, 235, 110, 238],
+  [124, 240, 138, 240, 150, 240],
+]);
+const TRAEGER = "M126,197 L130,158 L134,158 L130,197 Z";
+const SLIP = symmetrisch([150, 324], [
+  [134, 324, 116, 325, 103, 330],
+  [102, 340, 101, 350, 101, 360],
+  [114, 372, 134, 386, 146, 396],
+  [148, 397, 149, 397, 150, 397],
 ]);
 
 // Ein Stück Umriss aus kleinen Bögen (für Locken). Beginnt beim aktuellen Punkt des Pfads.
@@ -125,6 +131,14 @@ const HAARE = {
   lang: {
     hinten: "M150,40 C112,40 100,66 102,104 C104,150 96,200 98,262 C112,272 128,270 136,258 C134,210 136,170 138,140 L162,140 C164,170 166,210 164,258 C172,270 188,272 202,262 C204,200 196,150 198,104 C200,66 188,40 150,40 Z",
     vorne: "M112,98 C108,58 128,42 152,42 C176,42 192,58 188,98 C190,140 196,190 200,252 C192,264 180,264 172,254 C170,212 176,150 176,100 C172,78 160,66 146,64 C134,70 126,82 124,100 C124,150 130,212 128,254 C120,264 108,264 100,252 C104,190 110,140 112,98 Z",
+  },
+  schulterlang: {
+    hinten: "M150,40 C112,40 100,66 102,104 C103,140 100,170 100,190 C112,198 126,196 136,188 C136,170 137,155 138,140 L162,140 C163,155 164,170 164,188 C174,196 188,198 200,190 C200,170 197,140 198,104 C200,66 188,40 150,40 Z",
+    vorne: "M112,98 C108,58 128,42 152,42 C176,42 192,58 188,98 C190,130 194,160 198,186 C190,196 178,196 172,188 C172,160 176,130 176,100 C172,78 160,66 146,64 C134,70 126,82 124,100 C124,130 128,160 128,188 C122,196 110,196 102,186 C106,160 110,130 112,98 Z",
+  },
+  blowout: { // viel Volumen, Mittelscheitel mit Strähnen ums Gesicht, Spitzen nach innen geföhnt
+    hinten: "M150,34 C108,32 92,62 94,104 C94,140 88,170 92,204 C96,226 112,236 126,230 C136,226 138,214 136,200 L164,200 C162,214 164,226 174,230 C188,236 204,226 208,204 C212,170 206,140 206,104 C208,62 192,32 150,34 Z",
+    vorne: "M108,100 C100,56 126,36 152,36 C178,36 202,56 194,100 C196,134 204,172 202,206 C200,224 188,234 176,228 C166,224 166,212 174,206 C178,180 178,140 176,106 C172,84 162,68 150,62 C138,68 128,84 124,106 C122,140 122,180 126,206 C134,212 134,224 124,228 C112,234 100,224 98,206 C96,172 104,134 108,100 Z",
   },
   bob: {
     hinten: "M150,42 C114,42 102,68 104,104 C104,124 106,140 110,152 C124,158 176,158 190,152 C194,140 196,124 196,104 C198,68 186,42 150,42 Z",
@@ -163,8 +177,9 @@ function gesicht(haut, augen) {
     <ellipse cx="171" cy="110" rx="7" ry="4" fill="#E79A8C" opacity="0.18"/>`;
 }
 
-// Die ganze Figur als SVG-Text. kleidung: SVG-Text, der zwischen „basis“ und „vorne“ eingesetzt wird
-export function puppeSvg(aussehen = {}, kleidung = "") {
+// Die ganze Figur als SVG-Text.
+// kleidung: SVG-Text zwischen Grundkleidung und Haaren, obenauf: SVG-Text über den Haaren
+export function puppeSvg(aussehen = {}, { kleidung = "", obenauf = "" } = {}) {
   const haut = finde(HAUTTOENE, aussehen.haut);
   const haar = finde(HAARFARBEN, aussehen.haare);
   const augen = finde(AUGENFARBEN, aussehen.augen);
@@ -172,7 +187,7 @@ export function puppeSvg(aussehen = {}, kleidung = "") {
   const hautStil = `fill="${haut.farbe}" stroke="${haut.linie}" stroke-width="1.2" stroke-linejoin="round"`;
   const haarStil = `fill="${haar.farbe}" stroke="${haar.linie}" stroke-width="1.2" stroke-linejoin="round"`;
   const basisStil = `fill="${BASIS.farbe}" stroke="${BASIS.linie}" stroke-width="1.2" stroke-linejoin="round"`;
-  const shortsStil = `fill="${SHORTS_FARBE}" stroke="${BASIS.linie}" stroke-width="1.2" stroke-linejoin="round"`;
+  const bandStil = `fill="${BASIS.band}" stroke="${BASIS.linie}" stroke-width="1" stroke-linejoin="round"`;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${BREITE} ${HOEHE}" class="puppe-bild" role="img" aria-label="Deine Anziehpuppe">
     <g class="hinten"><path d="${frisur.hinten}" ${haarStil}/></g>
@@ -187,9 +202,10 @@ export function puppeSvg(aussehen = {}, kleidung = "") {
     </g>
     <g class="basis">
       <path d="${TRAEGER}" ${basisStil}/><path d="${spiegeln(TRAEGER)}" ${basisStil}/>
-      <path d="${SHORTS}" ${shortsStil}/><path d="${TOP}" ${basisStil}/>
+      <path d="${SLIP}" ${basisStil}/><path d="${BH}" ${basisStil}/><path d="${BH_BAND}" ${bandStil}/>
     </g>
     <g class="kleidung">${kleidung}</g>
     <g class="vorne"><path d="${frisur.vorne}" ${haarStil}/></g>
+    <g class="obenauf">${obenauf}</g>
   </svg>`;
 }

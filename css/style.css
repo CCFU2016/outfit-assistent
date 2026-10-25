@@ -606,6 +606,41 @@ label.feld .feld-titel {
   font-size: 14.5px;
 }
 
+/* Für die Puppe: ausgeschnittenes Bild auf Karomuster, damit man das Durchsichtige sieht */
+.ausschnitt-karte .feld-titel {
+  margin: 0 0 10px;
+}
+
+.ausschnitt-rahmen {
+  display: grid;
+  place-items: center;
+  height: 200px;
+  padding: 10px;
+  border-radius: var(--ecke);
+  background: repeating-conic-gradient(var(--flaeche) 0% 25%, #FFFFFF 0% 50%) 0 0 / 20px 20px;
+}
+
+.ausschnitt-rahmen img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 180px; /* Rahmen 200px minus Rand */
+}
+
+.ausschnitt-karte details.tipp summary {
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.ausschnitt-karte details.tipp ol {
+  margin: 8px 0 0;
+  padding-left: 20px;
+}
+
+.ausschnitt-karte details.tipp li + li {
+  margin-top: 6px;
+}
+
 /* Versteckt, aber noch antippbar (für die Foto-Auswahl im Button) */
 .unsichtbar {
   position: absolute;
@@ -1203,4 +1238,71 @@ label.feld .feld-titel {
 
 .version a {
   color: inherit;
+}
+
+.ausschnitt-karte > .knopf-breit {
+  margin-top: 10px;
+}
+
+/* ---------- Anziehpuppe (Seite „Look“) ---------- */
+.puppe-karte {
+  margin-bottom: 20px;
+}
+
+.puppe-bereich svg {
+  display: block;
+  width: auto;
+  height: min(60vh, 520px);
+  margin: 0 auto;
+}
+
+/* Beim Verschieben gehören die Finger der Puppe (sonst würde die Seite scrollen) */
+.puppe-bereich svg.verschieben {
+  touch-action: none;
+  outline: 1.5px dashed var(--rand);
+  outline-offset: 4px;
+  border-radius: var(--ecke);
+}
+
+.puppe-bereich svg.verschieben .puppe-stueck {
+  cursor: grab;
+}
+
+.puppe-fehlt {
+  margin: 12px 0 0;
+}
+
+.puppe-werkzeuge {
+  margin-top: 12px;
+}
+
+.puppe-werkzeuge .klein {
+  margin: 0 0 8px;
+}
+
+.puppe-knoepfe {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.puppe-knoepfe .puppe-zurueck {
+  grid-column: 1 / -1;
+}
+
+.puppe-karte .knopf[aria-pressed="true"] {
+  border-color: var(--akzent);
+  background: var(--akzent);
+}
+
+.puppe-aussehen {
+  margin-top: 14px;
+}
+
+.puppe-aussehen .feld + .feld {
+  margin-top: 12px;
+}
+
+.puppe-fehlt a {
+  color: var(--text);
 }

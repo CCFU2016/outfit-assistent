@@ -62,7 +62,8 @@ Er steht nie in der App, nie auf GitHub und gehört auch nie in einen Chat.
 
 ## Die Cloud
 
-- Tabelle `cloud`: pro Konto jedes Stück (mit Foto und Vorschaubild als Text) und jeder „Heute getragen“-Tag.
+- Tabelle `cloud`: pro Konto jedes Stück (mit Foto, Vorschaubild und dem ausgeschnittenen Bild für die Puppe, alles als Text),
+  jeder „Heute getragen“-Tag und das Aussehen der Puppe (`art: "einstellung"`, `id: "puppe"`).
 - Gibt es dasselbe Stück auf zwei Geräten verschieden, **gewinnt die neueste Änderung**.
 - Gelöschtes bleibt als „gelöscht“ stehen (ohne Fotos), damit es auch auf den anderen Geräten verschwindet.
 - **Sicherung der Datenbank:** Bei Railway beim Postgres-Dienst unter **Backups** regelmäßige Sicherungen
@@ -100,10 +101,10 @@ Endpunkte:
 - `POST /konto/abmelden`, `GET /konto/ich` (mit `Authorization: Bearer <token>`)
 
 Cloud (mit `Authorization: Bearer <token>`):
-- `POST /cloud/speichern` mit `{ art: "teil"|"getragen", id, geaendertAm, daten, foto, vorschau }`
+- `POST /cloud/speichern` mit `{ art: "teil"|"getragen"|"einstellung", id, geaendertAm, daten, foto, vorschau, ausgeschnitten }`
   oder `{ art, id, geaendertAm, geloescht: true }` → `{ uebernommen }` (false, wenn schon Neueres da ist)
 - `GET /cloud/aenderungen?seit=<stand>` → `{ konto, eintraege: [{ art, id, daten, geloescht, geaendertAm }], stand, mehr }`
-- `GET /cloud/fotos?id=<id>` → `{ foto, vorschau }` (als `data:image/jpeg;base64,…`)
+- `GET /cloud/fotos?id=<id>` → `{ foto, vorschau, ausgeschnitten }` (als `data:image/…;base64,…`, ausgeschnitten oft `null`)
 
 Erkennen und Prüfen (mit `Authorization: Bearer <token>` oder Kopfzeile `X-Zugangscode`):
 - `POST /erkennen` mit `{ "bild": "data:image/jpeg;base64,…" }` →

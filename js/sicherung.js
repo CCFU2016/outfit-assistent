@@ -27,6 +27,7 @@ export async function sicherungSpeichern() {
       ...teil,
       foto: await alsText(teil.foto),
       vorschau: await alsText(teil.vorschau),
+      ausgeschnitten: teil.ausgeschnitten ? await alsText(teil.ausgeschnitten) : null, // für die Puppe
     }))),
     getragen,
     einstellungen: ort ? { ort } : {},
@@ -84,7 +85,12 @@ export async function sicherungLesen(datei) {
   for (const teil of inhalt.teile) {
     try {
       if (!teil.id || !teil.name || !teil.kategorie || !teil.foto) throw new Error("unvollständig");
-      teile.push({ ...teil, foto: alsBild(teil.foto), vorschau: alsBild(teil.vorschau || teil.foto) });
+      teile.push({
+        ...teil,
+        foto: alsBild(teil.foto),
+        vorschau: alsBild(teil.vorschau || teil.foto),
+        ausgeschnitten: teil.ausgeschnitten ? alsBild(teil.ausgeschnitten) : null,
+      });
     } catch {
       kaputt++;
     }

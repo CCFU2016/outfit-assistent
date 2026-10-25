@@ -182,7 +182,20 @@ export async function sicherungEinspielen({ teile, getragen, einstellungen }) {
 }
 
 // ---------- Für die Cloud (die Arbeit macht cloud.js) ----------
-const SCHUBLADE_VON = { teil: "teile", getragen: "getragen" };
+const SCHUBLADE_VON = { teil: "teile", getragen: "getragen", einstellung: "einstellungen" };
+
+// Nur diese Einstellungen kommen in die Cloud (alles andere, z. B. die Anmeldung, bleibt auf dem Gerät)
+export const CLOUD_EINSTELLUNGEN = ["puppe"];
+
+// Eine Einstellung speichern, die auf allen Geräten gleich sein soll (z. B. das Aussehen der Puppe)
+export async function cloudEinstellungSpeichern(schluessel, wert) {
+  const mitZeit = { ...wert, geaendertAm: new Date().toISOString() };
+  await schreiben(["einstellungen", "ausstehend"], (vorgang) => {
+    vorgang.objectStore("einstellungen").put(mitZeit, schluessel);
+    vormerken(vorgang, "einstellung", schluessel, mitZeit.geaendertAm);
+  });
+  lokalGeaendert();
+}
 
 // Alle Änderungen, die noch hochgeladen werden müssen
 export function alleAusstehend() {
@@ -192,9 +205,15 @@ export function alleAusstehend() {
 // Beim ersten Abgleich mit einem Konto: alles, was auf diesem Gerät ist, für die Cloud vormerken
 export async function allesVormerken() {
   const [teile, getragen] = await Promise.all([alleTeile(), alleGetragen()]);
+  const einstellungen = [];
+  for (const schluessel of CLOUD_EINSTELLUNGEN) {
+    const wert = await einstellungLesen(schluessel);
+    if (wert) einstellungen.push([schluessel, wert]);
+  }
   await schreiben(["ausstehend"], (vorgang) => {
     for (const teil of teile) vormerken(vorgang, "teil", teil.id, zeitVon(teil));
     for (const eintrag of getragen) vormerken(vorgang, "getragen", eintrag.id, zeitVon(eintrag));
+    for (const [schluessel, wert] of einstellungen) vormerken(vorgang, "einstellung", schluessel, zeitVon(wert));
   });
 }
 
@@ -236,7 +255,8 @@ export async function ausCloudUebernehmen(art, id, geaendertAm, datensatz) {
       if (spaeter(hier, geaendertAm)) return; // hier ist es neuer: bleibt so und wird hochgeladen
       if (vermerk.result) vermerke.delete(`${art}:${id}`); // die Cloud hat schon denselben oder einen neueren Stand
       if (!spaeter(geaendertAm, hier)) return; // genau gleich alt: nichts zu tun
-      if (datensatz) schublade.put(datensatz);
+      if (datensatz && art === "einstellung") schublade.put(datensatz, id); // Einstellungen: Name extra
+      else if (datensatz) schublade.put(datensatz);
       else if (lokal.result) schublade.delete(id);
       geaendert = Boolean(datensatz || lokal.result);
     };

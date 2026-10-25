@@ -8,6 +8,7 @@ import { bildAdressen, fotoBild } from "./bilder.js";
 import { ortBestimmen, ortAuswaehlen } from "./ort-auswahl.js";
 import { gespeicherterOrt, wetterHolen, wetterText } from "./wetter.js";
 import { kombiTipps } from "./kombi.js";
+import { zeigePuppe } from "./puppe-ansicht.js";
 
 const auswahlBereich = document.getElementById("outfit-auswahl");
 const vorschau = document.getElementById("outfit-vorschau");
@@ -148,6 +149,7 @@ function zeichneVorschau() {
   }
   knopfGetragen.disabled = gewaehlt.length === 0;
   zeichneTipps(gewaehlt);
+  zeigePuppe(gewaehlt).catch((fehler) => console.error(fehler));
 }
 
 // Tipps: zu viele Farben? passt die Tasche? (die Regeln stehen in kombi.js)

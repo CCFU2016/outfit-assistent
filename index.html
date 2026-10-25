@@ -256,6 +256,32 @@
           <div id="auswahl-anlaesse" class="chips"></div>
         </fieldset>
 
+        <!-- Für die Puppe: das Stück ohne Hintergrund (siehe teil-formular.js und fotos.js) -->
+        <div class="karte ausschnitt-karte">
+          <h3 class="feld-titel">Für die Puppe</h3>
+          <div class="ausschnitt-rahmen">
+            <img id="ausschnitt-vorschau" alt="Das Stück ohne Hintergrund" hidden>
+            <span id="ausschnitt-leer" class="klein">Noch nicht ausgeschnitten</span>
+          </div>
+          <div class="foto-knoepfe">
+            <button id="knopf-einsetzen" class="knopf knopf-haupt" type="button">Einsetzen</button>
+            <label class="knopf knopf-zweit">
+              Bild wählen
+              <input id="ausschnitt-datei" class="unsichtbar" type="file" accept="image/png,image/*">
+            </label>
+          </div>
+          <button id="knopf-ausschnitt-weg" class="knopf knopf-zweit knopf-breit" type="button" hidden>Ausgeschnittenes Bild entfernen</button>
+          <p id="ausschnitt-status" class="tipp-hinweis ki-status" role="status" hidden></p>
+          <details class="tipp">
+            <summary>So geht's (iPhone und iPad)</summary>
+            <ol>
+              <li>Drück oben lange auf das Foto, bis das Stück leuchtet. Tippe auf <b>„Kopieren“</b> (oder „Motiv kopieren“).</li>
+              <li>Tippe hier auf <b>„Einsetzen“</b> und bestätige mit „Einsetzen“.</li>
+              <li>Klappt das lange Drücken hier nicht: Öffne ein Foto des Stücks in der App <b>„Fotos“</b>, drück dort lange darauf, tippe auf „Kopieren“ und dann hier auf „Einsetzen“.</li>
+            </ol>
+          </details>
+        </div>
+
         <p id="formular-meldung" class="meldung" role="alert" hidden></p>
 
         <div class="formular-knoepfe">
@@ -270,6 +296,27 @@
     <section id="outfit" class="bereich" aria-labelledby="titel-outfit" hidden>
       <h2 id="titel-outfit" class="bereich-titel">Look zusammenstellen</h2>
       <p class="klein einleitung">Tippe auf deine Stücke: pro Kategorie eins, Accessoires auch mehrere.</p>
+
+      <!-- Die Anziehpuppe (siehe puppe.js und puppe-ansicht.js) -->
+      <div class="karte puppe-karte">
+        <div id="puppe-bereich" class="puppe-bereich"></div>
+        <p id="puppe-fehlt" class="klein puppe-fehlt" hidden></p>
+        <div id="puppe-werkzeuge" class="puppe-werkzeuge" hidden>
+          <p class="klein">Tippe ein Stück an. Mit einem Finger verschieben, mit zwei Fingern größer oder kleiner machen.</p>
+          <div class="puppe-knoepfe">
+            <button class="knopf knopf-zweit" type="button" data-aktion="kleiner">Kleiner</button>
+            <button class="knopf knopf-zweit" type="button" data-aktion="groesser">Größer</button>
+            <button class="knopf knopf-zweit" type="button" data-aktion="schmaler">Schmaler</button>
+            <button class="knopf knopf-zweit" type="button" data-aktion="breiter">Breiter</button>
+            <button class="knopf knopf-zweit puppe-zurueck" type="button" data-aktion="zuruecksetzen">Zurücksetzen</button>
+          </div>
+        </div>
+        <div class="foto-knoepfe">
+          <button id="knopf-puppe-aussehen" class="knopf knopf-zweit" type="button" aria-pressed="false">Aussehen</button>
+          <button id="knopf-puppe-verschieben" class="knopf knopf-zweit" type="button" aria-pressed="false">Stücke verschieben</button>
+        </div>
+        <div id="puppe-aussehen" class="puppe-aussehen" hidden></div>
+      </div>
 
       <!-- Auswahl: eine Reihe pro Kategorie (wird von outfit.js gefüllt) -->
       <div id="outfit-auswahl"></div>

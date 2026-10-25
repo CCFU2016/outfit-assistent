@@ -1,7 +1,7 @@
 // teil-formular.js – ein Kleidungsstück anlegen, bearbeiten oder löschen
 
 import { teilLaden, teilSpeichern, teilLoeschen, neueId, bitteUmDauerhaftenSpeicher } from "./speicher.js";
-import { verkleinereFoto } from "./fotos.js";
+import { verkleinereFoto, bereiteAusschnittVor } from "./fotos.js";
 import { KATEGORIEN, ACCESSOIRE_ARTEN, WAERME, FARBEN, ANLAESSE } from "./daten.js";
 import { kiVorhanden, kiBereit, erkenne } from "./ki.js";
 
@@ -18,11 +18,20 @@ const knopfLoeschen = document.getElementById("knopf-loeschen");
 const feldArt = document.getElementById("feld-art");
 const knopfErkennen = document.getElementById("knopf-erkennen");
 const kiStatus = document.getElementById("ki-status");
+const formularBereich = document.getElementById("formular");
+const ausschnittBild = document.getElementById("ausschnitt-vorschau");
+const ausschnittLeer = document.getElementById("ausschnitt-leer");
+const knopfEinsetzen = document.getElementById("knopf-einsetzen");
+const ausschnittDatei = document.getElementById("ausschnitt-datei");
+const knopfAusschnittWeg = document.getElementById("knopf-ausschnitt-weg");
+const ausschnittStatus = document.getElementById("ausschnitt-status");
 
 let bisherigesTeil = null; // beim Bearbeiten: das Teil, wie es gespeichert ist
 let neueFotos = null;      // nach der Fotoauswahl: { foto, vorschau }
 let fotoAdresse = null;    // Adresse für die Foto-Vorschau im Formular
 let erkennungNr = 0;       // zählt mit, damit eine alte, verspätete Antwort nichts mehr einträgt
+let neuerAusschnitt;       // für die Puppe: undefined = unverändert, null = entfernt, sonst das neue Bild
+let ausschnittAdresse = null;
 
 // ---------- Die Auswahl-Knöpfe aus den Listen in daten.js bauen ----------
 baueAuswahl("auswahl-kategorie", "kategorie", "radio", KATEGORIEN);
@@ -90,6 +99,9 @@ export async function zeigeFormular(id) {
   zeigeArtFeld();
   zeigeFoto(bisherigesTeil ? bisherigesTeil.foto : null);
   knopfErkennen.hidden = !kiVorhanden() || !bisherigesTeil;
+  neuerAusschnitt = undefined;
+  zeigeAusschnitt(bisherigesTeil?.ausgeschnitten || null);
+  zeigeAusschnittStatus("");
 }
 
 // "Art" gibt es nur bei Accessoires
@@ -197,6 +209,71 @@ function zeigeKiStatus(text, istFehler = false) {
   kiStatus.classList.toggle("ki-fehler", istFehler);
 }
 
+// ---------- Für die Puppe: das ausgeschnittene Bild (die Arbeit macht fotos.js) ----------
+// „Einsetzen“ holt das Bild aus der Zwischenablage (nach „Kopieren“ / „Motiv kopieren“ auf dem iPhone)
+knopfEinsetzen.hidden = !navigator.clipboard?.read;
+knopfEinsetzen.addEventListener("click", async () => {
+  try {
+    for (const eintrag of await navigator.clipboard.read()) {
+      const typ = eintrag.types.find((art) => art.startsWith("image/"));
+      if (typ) return await uebernimmAusschnitt(await eintrag.getType(typ));
+    }
+    zeigeAusschnittStatus("In der Zwischenablage ist kein Bild. Kopier zuerst das ausgeschnittene Stück (siehe „So geht's“).", true);
+  } catch (fehler) {
+    console.warn(fehler);
+    zeigeAusschnittStatus("Einsetzen hat nicht geklappt. Tippe noch einmal auf „Einsetzen“ und bestätige mit „Einsetzen“.", true);
+  }
+});
+
+ausschnittDatei.addEventListener("change", async () => {
+  const datei = ausschnittDatei.files[0];
+  ausschnittDatei.value = "";
+  if (datei) await uebernimmAusschnitt(datei);
+});
+
+// Am Computer oder mit Tastatur geht auch Einfügen (⌘V / Strg+V), solange das Formular offen ist
+window.addEventListener("paste", (ereignis) => {
+  if (formularBereich.hidden) return;
+  const datei = [...(ereignis.clipboardData?.files || [])].find((eintrag) => eintrag.type.startsWith("image/"));
+  if (!datei) return; // z. B. Text in das Namensfeld einfügen: ganz normal
+  ereignis.preventDefault();
+  uebernimmAusschnitt(datei);
+});
+
+knopfAusschnittWeg.addEventListener("click", () => {
+  neuerAusschnitt = null;
+  zeigeAusschnitt(null);
+  zeigeAusschnittStatus("Entfernt. Vergiss nicht zu speichern.");
+});
+
+async function uebernimmAusschnitt(datei) {
+  zeigeAusschnittStatus("Einen Moment …");
+  try {
+    neuerAusschnitt = await bereiteAusschnittVor(datei);
+    zeigeAusschnitt(neuerAusschnitt);
+    zeigeAusschnittStatus("Eingesetzt! Vergiss nicht zu speichern.");
+  } catch (fehler) {
+    console.warn(fehler);
+    zeigeAusschnittStatus(fehler.message.startsWith("Auf diesem Bild") ? fehler.message : "Dieses Bild ging leider nicht.", true);
+  }
+}
+
+function zeigeAusschnitt(bild) {
+  if (ausschnittAdresse) URL.revokeObjectURL(ausschnittAdresse);
+  ausschnittAdresse = bild ? URL.createObjectURL(bild) : null;
+  ausschnittBild.hidden = !bild;
+  ausschnittLeer.hidden = Boolean(bild);
+  knopfAusschnittWeg.hidden = !bild;
+  if (bild) ausschnittBild.src = ausschnittAdresse;
+  else ausschnittBild.removeAttribute("src");
+}
+
+function zeigeAusschnittStatus(text, istFehler = false) {
+  ausschnittStatus.textContent = text;
+  ausschnittStatus.hidden = !text;
+  ausschnittStatus.classList.toggle("ki-fehler", istFehler);
+}
+
 // ---------- Speichern ----------
 formular.addEventListener("submit", async (ereignis) => {
   ereignis.preventDefault(); // die Seite soll nicht neu laden
@@ -233,6 +310,10 @@ formular.addEventListener("submit", async (ereignis) => {
     erstelltAm: bisherigesTeil ? bisherigesTeil.erstelltAm : jetzt,
     geaendertAm: jetzt,
   };
+  if (neuerAusschnitt !== undefined) {
+    teil.ausgeschnitten = neuerAusschnitt;
+    teil.puppe = null; // neues Bild: den Platz auf der Puppe neu bestimmen
+  }
 
   knopfSpeichern.disabled = true;
   try {

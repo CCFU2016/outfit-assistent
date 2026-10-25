@@ -48,5 +48,7 @@ export async function tabellenAnlegen() {
       PRIMARY KEY (konto_id, art, id)
     );
     CREATE INDEX IF NOT EXISTS cloud_nach_stand ON cloud (konto_id, stand);
+    -- Für die Anziehpuppe: das Stück ohne Hintergrund (PNG als Text), dazugekommen in Version 1.6
+    ALTER TABLE cloud ADD COLUMN IF NOT EXISTS ausgeschnitten TEXT;
   `);
 }

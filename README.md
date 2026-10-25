@@ -30,6 +30,8 @@ und lässt sich wie eine normale App auf den Startbildschirm legen.
 | `js/verbindung.js` | Adresse des **Servers** und verständliche Fehlermeldungen. |
 | `js/konto.js`, `js/anmeldung-seite.js` | **Anmeldung**: anmelden, Konto anlegen (nur mit Einladungscode), abmelden. Schalter `ANMELDUNG_PFLICHT`. |
 | `js/cloud.js` | **Cloud**: holt Änderungen der anderen Geräte und lädt die von hier hoch. Die neueste Änderung gewinnt. |
+| `js/puppe.js` | Die **Anziehpuppe** als Zeichnung (SVG): Hautton, Haarfarbe, Frisur und Augenfarbe zum Auswählen. |
+| `js/puppe-ansicht.js` | Die Puppe auf der Seite **Look**: zieht die gewählten Stücke an, Stücke verschieben und größer/kleiner machen, Aussehen ändern. |
 | `server/` | Der kleine **Server** bei Railway: Anmeldung, Cloud und Claude fragen. Nur dort liegt der API-Schlüssel. Anleitung: `server/README.md`. |
 | `sw.js` | Der **Service Worker**: legt die App-Dateien auf dem Gerät ab, damit die App schnell und auch ohne Internet startet. |
 | `manifest.webmanifest` | Der **Steckbrief** der App: Name, Icon und Farben für den Startbildschirm. |
@@ -76,6 +78,7 @@ schon auf deinem Handy angekommen ist.
 - [x] 1.4 Sicherung speichern und laden (iPhone: Teilen-Menü → „In Dateien sichern“, Android: Downloads)
 - [x] Anmeldung: Konto nur mit Einladungscode, die App ist nur nach dem Anmelden nutzbar
 - [x] Cloud: Stücke, Fotos und „Heute getragen“ auf allen Geräten gleich (die neueste Änderung gewinnt)
+- [x] 2 Anziehpuppe: gezeichnete Figur zum Anpassen; Stücke ohne Hintergrund (iPhone: „Motiv kopieren“) ziehen sie an
 
 ## Lizenzen
 

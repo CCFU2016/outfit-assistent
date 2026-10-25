@@ -7,12 +7,13 @@
 import { pool } from "./datenbank.js";
 import { KontoFehler } from "./konten.js";
 
-const ARTEN = ["teil", "getragen"];
+const ARTEN = ["teil", "getragen", "einstellung"]; // Einstellung: z. B. das Aussehen der Puppe
 const FOTO = /^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
 const SEITE = 200; // so viele Änderungen schicken wir höchstens auf einmal
 
 // Eine Änderung aus der App speichern. Ergebnis: { uebernommen } (false, wenn hier schon Neueres liegt)
-export async function speichern(kontoId, { art, id, geaendertAm, geloescht, daten, foto, vorschau } = {}) {
+export async function speichern(kontoId, anfrage = {}) {
+  const { art, id, geaendertAm, geloescht, daten, foto, vorschau, ausgeschnitten } = anfrage;
   if (!ARTEN.includes(art)) throw new KontoFehler(400, "Unbekannte Art.");
   if (typeof id !== "string" || !id || id.length > 100) throw new KontoFehler(400, "Die Nummer fehlt.");
   const zeit = new Date(geaendertAm);
@@ -20,8 +21,12 @@ export async function speichern(kontoId, { art, id, geaendertAm, geloescht, date
   if (!geloescht) {
     if (!daten || typeof daten !== "object" || Array.isArray(daten)) throw new KontoFehler(400, "Die Angaben fehlen.");
     if (art === "teil" && !(FOTO.test(foto || "") && FOTO.test(vorschau || ""))) throw new KontoFehler(400, "Das Foto fehlt.");
+    if (ausgeschnitten && !FOTO.test(ausgeschnitten)) throw new KontoFehler(400, "Das ausgeschnittene Bild ist kaputt.");
   }
   const mitFoto = !geloescht && art === "teil";
+  // Ältere App-Versionen (vor 1.6) kennen das ausgeschnittene Bild nicht und schicken es nicht mit.
+  // Dann bleibt das Bild in der Cloud, wie es ist. (Neue Versionen schicken es immer mit, notfalls als null.)
+  const mitAusschnitt = "ausgeschnitten" in anfrage || !mitFoto;
 
   const verbindung = await pool.connect();
   try {
@@ -29,13 +34,15 @@ export async function speichern(kontoId, { art, id, geaendertAm, geloescht, date
     // Pro Konto schreibt immer nur ein Gerät gleichzeitig. So kommen die Stand-Nummern in der richtigen Reihenfolge an.
     await verbindung.query("SELECT pg_advisory_xact_lock($1)", [kontoId]);
     const ergebnis = await verbindung.query(
-      `INSERT INTO cloud (konto_id, art, id, daten, foto, vorschau, geloescht, geaendert_am, stand)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, nextval('cloud_stand'))
+      `INSERT INTO cloud (konto_id, art, id, daten, foto, vorschau, ausgeschnitten, geloescht, geaendert_am, stand)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, nextval('cloud_stand'))
        ON CONFLICT (konto_id, art, id) DO UPDATE SET
          daten = EXCLUDED.daten, foto = EXCLUDED.foto, vorschau = EXCLUDED.vorschau,
+         ausgeschnitten = CASE WHEN $10 THEN EXCLUDED.ausgeschnitten ELSE cloud.ausgeschnitten END,
          geloescht = EXCLUDED.geloescht, geaendert_am = EXCLUDED.geaendert_am, stand = EXCLUDED.stand
        WHERE cloud.geaendert_am < EXCLUDED.geaendert_am`,
-      [kontoId, art, id, geloescht ? null : daten, mitFoto ? foto : null, mitFoto ? vorschau : null, Boolean(geloescht), zeit]
+      [kontoId, art, id, geloescht ? null : daten, mitFoto ? foto : null, mitFoto ? vorschau : null,
+        mitFoto && ausgeschnitten ? ausgeschnitten : null, Boolean(geloescht), zeit, mitAusschnitt]
     );
     await verbindung.query("COMMIT");
     return { uebernommen: ergebnis.rowCount === 1 };
@@ -70,13 +77,14 @@ export async function aenderungen(kontoId, seit) {
   };
 }
 
-// Die beiden Fotos eines Stücks: { foto, vorschau } als "data:image/jpeg;base64,…"
+// Die Bilder eines Stücks: { foto, vorschau, ausgeschnitten } als "data:image/…;base64,…"
+// (ausgeschnitten: das Bild ohne Hintergrund für die Puppe, oder null)
 export async function fotos(kontoId, id) {
   const ergebnis = await pool.query(
-    "SELECT foto, vorschau FROM cloud WHERE konto_id = $1 AND art = 'teil' AND id = $2 AND NOT geloescht",
+    "SELECT foto, vorschau, ausgeschnitten FROM cloud WHERE konto_id = $1 AND art = 'teil' AND id = $2 AND NOT geloescht",
     [kontoId, String(id || "")]
   );
   const zeile = ergebnis.rows[0];
   if (!zeile) throw new KontoFehler(404, "Dieses Stück gibt es in der Cloud nicht (mehr).");
-  return { foto: zeile.foto, vorschau: zeile.vorschau };
+  return { foto: zeile.foto, vorschau: zeile.vorschau, ausgeschnitten: zeile.ausgeschnitten };
 }

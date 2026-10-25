@@ -11,7 +11,7 @@
 
 import {
   alleAusstehend, allesVormerken, ausstehendErledigt, cloudEintragLaden, lokaleZeit,
-  ausCloudUebernehmen, spaeter, zeitVon, einstellungLesen, einstellungSpeichern,
+  ausCloudUebernehmen, spaeter, zeitVon, einstellungLesen, einstellungSpeichern, CLOUD_EINSTELLUNGEN,
 } from "./speicher.js";
 import { frageServer } from "./verbindung.js";
 import { sitzung, anmeldeKopf, sitzungVergessen } from "./konto.js";
@@ -101,7 +101,7 @@ async function einmalAbgleichen() {
 // Eine Änderung von einem anderen Gerät übernehmen. Ergebnis: true, wenn sich hier etwas geändert hat
 async function uebernehmen(eintrag, kopf) {
   const { art, id, geaendertAm, geloescht, daten } = eintrag;
-  if (art !== "teil" && art !== "getragen") return false; // kennt diese App-Version noch nicht
+  if (!erlaubt(art, id)) return false; // kennt diese App-Version (noch) nicht
   const hier = await lokaleZeit(art, id);
   if (spaeter(hier, geaendertAm)) return false; // hier ist es neuer
 
@@ -113,6 +113,7 @@ async function uebernehmen(eintrag, kopf) {
       const fotos = await frageServer(`/cloud/fotos?id=${encodeURIComponent(id)}`, { methode: "GET", kopf });
       datensatz.foto = alsBild(fotos.foto);
       datensatz.vorschau = alsBild(fotos.vorschau);
+      if (fotos.ausgeschnitten) datensatz.ausgeschnitten = alsBild(fotos.ausgeschnitten); // für die Puppe
     }
   }
   return ausCloudUebernehmen(art, id, geaendertAm, datensatz);
@@ -130,16 +131,24 @@ async function hochladen(vermerk, kopf) {
   const geaendertAm = zeitVon(eintrag);
   const inhalt = { art, id, geaendertAm };
   if (art === "teil") {
-    const { foto, vorschau, ...angaben } = eintrag;
+    const { foto, vorschau, ausgeschnitten, ...angaben } = eintrag;
     if (!(foto instanceof Blob && vorschau instanceof Blob)) return geaendertAm; // ohne Foto geht es nicht in die Cloud
     inhalt.daten = angaben;
     inhalt.foto = await alsText(foto);
     inhalt.vorschau = await alsText(vorschau);
+    inhalt.ausgeschnitten = ausgeschnitten instanceof Blob ? await alsText(ausgeschnitten) : null;
   } else {
     inhalt.daten = eintrag;
   }
   await frageServer("/cloud/speichern", { inhalt, kopf });
   return geaendertAm;
+}
+
+// Was darf aus der Cloud übernommen werden? Bei Einstellungen nur die Liste aus speicher.js
+// (nie z. B. die Anmeldung)
+function erlaubt(art, id) {
+  if (art === "teil" || art === "getragen") return true;
+  return art === "einstellung" && CLOUD_EINSTELLUNGEN.includes(id);
 }
 
 function melde(neu) {
