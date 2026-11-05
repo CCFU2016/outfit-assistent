@@ -101,12 +101,33 @@ export function teilLaden(id) {
   return inSchublade("teile", "readonly", (schublade) => schublade.get(id));
 }
 
+// Ergebnis: das gespeicherte Teil (mit frisch kopierten Bildern, siehe bilderKopieren)
 export async function teilSpeichern(teil) {
+  const sicher = await bilderKopieren(teil);
   await schreiben(["teile", "ausstehend"], (vorgang) => {
-    vorgang.objectStore("teile").put(teil);
-    vormerken(vorgang, "teil", teil.id, zeitVon(teil));
+    vorgang.objectStore("teile").put(sicher);
+    vormerken(vorgang, "teil", sicher.id, zeitVon(sicher));
   });
   lokalGeaendert();
+  return sicher;
+}
+
+// Safari-Falle: Ein Bild, das aus der Datenbank gelesen wurde, hängt an einer Datei der Datenbank.
+// Wird der Eintrag überschrieben, kann Safari diese Datei löschen, und das Bild ist kaputt.
+// Deshalb wird vor dem Speichern jedes Bild einmal in den Arbeitsspeicher kopiert.
+export const BILD_FELDER = ["foto", "vorschau", "ausgeschnitten"];
+
+async function bilderKopieren(teil) {
+  const kopie = { ...teil };
+  for (const feld of BILD_FELDER) {
+    if (!(kopie[feld] instanceof Blob)) continue;
+    try {
+      kopie[feld] = new Blob([await kopie[feld].arrayBuffer()], { type: kopie[feld].type });
+    } catch {
+      // Schon kaputt: so lassen. cloud.js holt es beim nächsten Abgleich aus der Cloud zurück.
+    }
+  }
+  return kopie;
 }
 
 export async function teilLoeschen(id) {
@@ -195,6 +216,13 @@ export async function cloudEinstellungSpeichern(schluessel, wert) {
     vormerken(vorgang, "einstellung", schluessel, mitZeit.geaendertAm);
   });
   lokalGeaendert();
+}
+
+// Ein Stück zum Hochladen vormerken, ohne es zu ändern (z. B. damit cloud.js ein kaputtes Bild repariert)
+export async function teilVormerken(id) {
+  const teil = await teilLaden(id);
+  if (!teil) return;
+  await schreiben(["ausstehend"], (vorgang) => vormerken(vorgang, "teil", id, zeitVon(teil)));
 }
 
 // Alle Änderungen, die noch hochgeladen werden müssen

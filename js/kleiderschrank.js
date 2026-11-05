@@ -91,7 +91,10 @@ function baueKachel(teil) {
     teil.regenfest ? "regenfest" : null,
   ].filter(Boolean).join(" · ");
 
-  kachel.append(fotoBild(bilder.neu(teil.vorschau), teil.name), name, info);
+  const foto = fotoBild(bilder.neu(teil.vorschau), teil.name);
+  // Lässt sich das Bild nicht anzeigen, versucht cloud.js, es aus der Cloud zu reparieren
+  foto.addEventListener("error", () => window.dispatchEvent(new CustomEvent("bild-kaputt", { detail: teil.id })), { once: true });
+  kachel.append(foto, name, info);
   return kachel;
 }
 

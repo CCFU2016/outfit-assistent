@@ -23,7 +23,7 @@ let svg = null;
 let zeichnenNr = 0;    // zählt mit, damit ein altes, langsames Zeichnen nichts überschreibt
 
 const verhaeltnisse = new Map(); // Seitenverhältnis (Breite / Höhe) pro Bild
-const adressen = new Map();      // blob:-Adresse pro Bild (bleibt gleich, damit nichts flackert)
+const adressen = new Map();      // blob:-Adresse pro Bild-Objekt (bleibt gleich, damit nichts flackert)
 
 // ---------- Anzeigen ----------
 export async function zeigePuppe(gewaehlt) {
@@ -43,18 +43,18 @@ function zeichne() {
   const ebenen = { kleidung: [], obenauf: [] };
   const benutzt = new Set();
   for (const teil of [...stuecke].sort((a, b) => ebeneVon(a) - ebeneVon(b))) {
-    const schluessel = bildSchluessel(teil);
-    benutzt.add(schluessel);
-    if (!adressen.has(schluessel)) adressen.set(schluessel, URL.createObjectURL(teil.ausgeschnitten));
-    const bild = `<image class="puppe-stueck" data-id="${maskiert(teil.id)}" href="${adressen.get(schluessel)}"
+    const ausschnitt = teil.ausgeschnitten;
+    benutzt.add(ausschnitt);
+    if (!adressen.has(ausschnitt)) adressen.set(ausschnitt, URL.createObjectURL(ausschnitt));
+    const bild = `<image class="puppe-stueck" data-id="${maskiert(teil.id)}" href="${adressen.get(ausschnitt)}"
       preserveAspectRatio="none" ${lage(platzVon(teil))}/>`;
     (ebeneVon(teil) >= OBENAUF ? ebenen.obenauf : ebenen.kleidung).push(bild);
   }
   // Adressen von Bildern, die nicht mehr zu sehen sind, wieder freigeben
-  for (const [schluessel, adresse] of adressen) {
-    if (!benutzt.has(schluessel)) {
+  for (const [ausschnitt, adresse] of adressen) {
+    if (!benutzt.has(ausschnitt)) {
       URL.revokeObjectURL(adresse);
-      adressen.delete(schluessel);
+      adressen.delete(ausschnitt);
     }
   }
   bereich.innerHTML = puppeSvg(aussehen, { kleidung: ebenen.kleidung.join(""), obenauf: ebenen.obenauf.join("") });
@@ -269,7 +269,8 @@ function speichereSpaeter(teil) {
   clearTimeout(speicherWecker.get(teil.id));
   speicherWecker.set(teil.id, setTimeout(() => {
     teil.geaendertAm = new Date().toISOString(); // damit die Cloud den neuen Platz übernimmt
-    teilSpeichern(teil).catch((fehler) => console.error(fehler));
+    // Danach die frisch kopierten Bilder übernehmen (siehe bilderKopieren in speicher.js)
+    teilSpeichern(teil).then((gespeichert) => Object.assign(teil, gespeichert)).catch((fehler) => console.error(fehler));
   }, 800));
 }
 

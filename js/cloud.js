@@ -12,6 +12,7 @@
 import {
   alleAusstehend, allesVormerken, ausstehendErledigt, cloudEintragLaden, lokaleZeit,
   ausCloudUebernehmen, spaeter, zeitVon, einstellungLesen, einstellungSpeichern, CLOUD_EINSTELLUNGEN,
+  teilSpeichern, teilVormerken, BILD_FELDER,
 } from "./speicher.js";
 import { frageServer } from "./verbindung.js";
 import { sitzung, anmeldeKopf, sitzungVergessen } from "./konto.js";
@@ -126,9 +127,13 @@ async function hochladen(vermerk, kopf) {
     await frageServer("/cloud/speichern", { inhalt: { art, id, geaendertAm: vermerk.geaendertAm, geloescht: true }, kopf });
     return vermerk.geaendertAm;
   }
-  const eintrag = await cloudEintragLaden(art, id);
+  let eintrag = await cloudEintragLaden(art, id);
   if (!eintrag) return null; // inzwischen gelöscht: Dafür gibt es einen eigenen Vermerk
   const geaendertAm = zeitVon(eintrag);
+  if (art === "teil") {
+    eintrag = await bilderReparieren(eintrag, kopf);
+    if (!eintrag) return geaendertAm; // Foto kaputt und nicht in der Cloud: nicht zu retten
+  }
   const inhalt = { art, id, geaendertAm };
   if (art === "teil") {
     const { foto, vorschau, ausgeschnitten, ...angaben } = eintrag;
@@ -142,6 +147,40 @@ async function hochladen(vermerk, kopf) {
   }
   await frageServer("/cloud/speichern", { inhalt, kopf });
   return geaendertAm;
+}
+
+// Hat Safari ein Bild dieses Stücks kaputt gemacht (siehe bilderKopieren in speicher.js)?
+// Dann das Bild aus der Cloud zurückholen. Ergebnis: das heile Stück, oder null, wenn das Foto fehlt.
+async function bilderReparieren(teil, kopf) {
+  const kaputt = [];
+  for (const feld of BILD_FELDER) {
+    if (teil[feld] && !(await lesbar(teil[feld]))) kaputt.push(feld);
+  }
+  if (kaputt.length === 0) return teil;
+
+  console.warn(`Kaputte Bilder bei ${teil.id}: ${kaputt.join(", ")} – hole sie aus der Cloud`);
+  let ausCloud = {};
+  try {
+    ausCloud = await frageServer(`/cloud/fotos?id=${encodeURIComponent(teil.id)}`, { methode: "GET", kopf });
+  } catch (fehler) {
+    if (fehler.status !== 404) throw fehler; // z. B. kein Internet: später noch einmal versuchen
+  }
+  const heil = { ...teil };
+  for (const feld of kaputt) heil[feld] = ausCloud[feld] ? alsBild(ausCloud[feld]) : null;
+  if (!heil.foto || !heil.vorschau) return null;
+  const gespeichert = await teilSpeichern(heil);
+  window.dispatchEvent(new Event("cloud-geaendert")); // die Garderobe zeigt das Foto wieder
+  return gespeichert;
+}
+
+async function lesbar(bild) {
+  if (!(bild instanceof Blob)) return false;
+  try {
+    await bild.arrayBuffer();
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 // Was darf aus der Cloud übernommen werden? Bei Einstellungen nur die Liste aus speicher.js
@@ -165,6 +204,14 @@ function imHintergrund() {
 window.addEventListener("lokal-geaendert", () => {
   clearTimeout(wecker);
   wecker = setTimeout(imHintergrund, WARTEN_NACH_AENDERUNG_MS);
+});
+// Die Garderobe meldet ein Bild, das sich nicht anzeigen lässt: beim Abgleich reparieren (einmal pro Start)
+const schonVersucht = new Set();
+window.addEventListener("bild-kaputt", async (ereignis) => {
+  if (schonVersucht.has(ereignis.detail)) return;
+  schonVersucht.add(ereignis.detail);
+  await teilVormerken(ereignis.detail);
+  imHintergrund();
 });
 // Internet ist wieder da, oder die App wird wieder geöffnet
 window.addEventListener("online", imHintergrund);
