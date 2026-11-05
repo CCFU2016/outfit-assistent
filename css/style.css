@@ -614,9 +614,14 @@ label.feld .feld-titel {
 .ausschnitt-rahmen {
   display: grid;
   place-items: center;
-  height: 200px;
+  height: 260px;
   padding: 10px;
   border-radius: var(--ecke);
+  background: var(--flaeche);
+}
+
+/* Mit ausgeschnittenem Bild: Karomuster, damit man das Durchsichtige sieht */
+.ausschnitt-rahmen.ist-ausgeschnitten {
   background: repeating-conic-gradient(var(--flaeche) 0% 25%, #FFFFFF 0% 50%) 0 0 / 20px 20px;
 }
 
@@ -624,7 +629,17 @@ label.feld .feld-titel {
   width: auto;
   height: auto;
   max-width: 100%;
-  max-height: 180px; /* Rahmen 200px minus Rand */
+  max-height: 240px; /* Rahmen 260px minus Rand */
+}
+
+.ausschnitt-anleitung {
+  margin: 12px 0 0;
+  padding-left: 22px;
+  font-size: 15px;
+}
+
+.ausschnitt-anleitung li + li {
+  margin-top: 4px;
 }
 
 .ausschnitt-karte details.tipp summary {
@@ -632,13 +647,8 @@ label.feld .feld-titel {
   font-weight: 500;
 }
 
-.ausschnitt-karte details.tipp ol {
+.ausschnitt-karte details.tipp p {
   margin: 8px 0 0;
-  padding-left: 20px;
-}
-
-.ausschnitt-karte details.tipp li + li {
-  margin-top: 6px;
 }
 
 /* Versteckt, aber noch antippbar (für die Foto-Auswahl im Button) */

@@ -54,8 +54,8 @@ export async function bereiteAusschnittVor(datei) {
     }
     if (rechts < 0) throw new Error("Auf diesem Bild ist nichts zu sehen.");
     if (durchsichtig < breite * hoehe * 0.03) {
-      throw new Error("Auf diesem Bild ist der Hintergrund noch da. Auf der Puppe wäre das ein Rechteck. " +
-        "Schneide das Stück zuerst aus (siehe „So geht's“) und setze es dann ein.");
+      throw new Error("Auf diesem Bild ist der Hintergrund noch da. Drück noch einmal lange auf das Foto und warte, " +
+        "bis nur das Kleidungsstück hochkommt. Tippe dann auf „Kopieren“ (oder „Motiv kopieren“) und wieder auf „Einsetzen“.");
     }
 
     const ausschnittBreite = rechts - links + 1;

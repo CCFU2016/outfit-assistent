@@ -13,7 +13,7 @@ import { zeigeAnmeldung } from "./anmeldung-seite.js";
 import { sitzung, ANMELDUNG_PFLICHT } from "./konto.js";
 import { abgleichen } from "./cloud.js";
 
-const VERSION = "1.6 (Anziehpuppe)";
+const VERSION = "1.6.1 (Anziehpuppe: leichter einsetzen)";
 
 const TABS = ["kleiderschrank", "outfit", "wetter"];
 

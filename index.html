@@ -259,10 +259,17 @@
         <!-- Für die Puppe: das Stück ohne Hintergrund (siehe teil-formular.js und fotos.js) -->
         <div class="karte ausschnitt-karte">
           <h3 class="feld-titel">Für die Puppe</h3>
-          <div class="ausschnitt-rahmen">
+          <!-- Ohne ausgeschnittenes Bild steht hier das Foto: darauf lange drücken und „Kopieren“ -->
+          <div id="ausschnitt-rahmen" class="ausschnitt-rahmen">
+            <img id="ausschnitt-original" class="foto" alt="Foto des Stücks: hier lange drücken" hidden>
             <img id="ausschnitt-vorschau" alt="Das Stück ohne Hintergrund" hidden>
-            <span id="ausschnitt-leer" class="klein">Noch nicht ausgeschnitten</span>
+            <span id="ausschnitt-leer" class="klein">Mach zuerst oben ein Foto.</span>
           </div>
+          <ol id="ausschnitt-anleitung" class="ausschnitt-anleitung">
+            <li>Drück <b>lange auf das Foto hier</b>, bis das Stück einzeln hochkommt. Tippe auf <b>„Kopieren“</b> (oder „Motiv kopieren“).</li>
+            <li>Tippe auf <b>„Einsetzen“</b> und dann noch einmal auf <b>„Einsetzen“</b>.</li>
+            <li>Ganz unten auf <b>„Speichern“</b> tippen.</li>
+          </ol>
           <div class="foto-knoepfe">
             <button id="knopf-einsetzen" class="knopf knopf-haupt" type="button">Einsetzen</button>
             <label class="knopf knopf-zweit">
@@ -273,12 +280,9 @@
           <button id="knopf-ausschnitt-weg" class="knopf knopf-zweit knopf-breit" type="button" hidden>Ausgeschnittenes Bild entfernen</button>
           <p id="ausschnitt-status" class="tipp-hinweis ki-status" role="status" hidden></p>
           <details class="tipp">
-            <summary>So geht's (iPhone und iPad)</summary>
-            <ol>
-              <li>Drück oben lange auf das Foto, bis das Stück leuchtet. Tippe auf <b>„Kopieren“</b> (oder „Motiv kopieren“).</li>
-              <li>Tippe hier auf <b>„Einsetzen“</b> und bestätige mit „Einsetzen“.</li>
-              <li>Klappt das lange Drücken hier nicht: Öffne ein Foto des Stücks in der App <b>„Fotos“</b>, drück dort lange darauf, tippe auf „Kopieren“ und dann hier auf „Einsetzen“.</li>
-            </ol>
+            <summary>Klappt nicht?</summary>
+            <p>Drück lange auf das Foto <b>hier in diesem Kasten</b>, nicht auf ein Bild in der Garderobe. Dort kopiert das iPad nur einen Link.</p>
+            <p>Oder: Öffne ein Foto des Stücks in der App <b>„Fotos“</b>, drück dort lange auf das Kleidungsstück, tippe auf „Kopieren“ und dann hier auf „Einsetzen“.</p>
           </details>
         </div>
 

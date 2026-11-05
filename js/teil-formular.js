@@ -19,6 +19,9 @@ const feldArt = document.getElementById("feld-art");
 const knopfErkennen = document.getElementById("knopf-erkennen");
 const kiStatus = document.getElementById("ki-status");
 const formularBereich = document.getElementById("formular");
+const ausschnittRahmen = document.getElementById("ausschnitt-rahmen");
+const ausschnittOriginal = document.getElementById("ausschnitt-original");
+const ausschnittAnleitung = document.getElementById("ausschnitt-anleitung");
 const ausschnittBild = document.getElementById("ausschnitt-vorschau");
 const ausschnittLeer = document.getElementById("ausschnitt-leer");
 const knopfEinsetzen = document.getElementById("knopf-einsetzen");
@@ -32,6 +35,7 @@ let fotoAdresse = null;    // Adresse für die Foto-Vorschau im Formular
 let erkennungNr = 0;       // zählt mit, damit eine alte, verspätete Antwort nichts mehr einträgt
 let neuerAusschnitt;       // für die Puppe: undefined = unverändert, null = entfernt, sonst das neue Bild
 let ausschnittAdresse = null;
+let originalAdresse = null;
 
 // ---------- Die Auswahl-Knöpfe aus den Listen in daten.js bauen ----------
 baueAuswahl("auswahl-kategorie", "kategorie", "radio", KATEGORIEN);
@@ -100,7 +104,7 @@ export async function zeigeFormular(id) {
   zeigeFoto(bisherigesTeil ? bisherigesTeil.foto : null);
   knopfErkennen.hidden = !kiVorhanden() || !bisherigesTeil;
   neuerAusschnitt = undefined;
-  zeigeAusschnitt(bisherigesTeil?.ausgeschnitten || null);
+  zeigeAusschnitt();
   zeigeAusschnittStatus("");
 }
 
@@ -134,6 +138,7 @@ for (const eingabe of document.querySelectorAll(".foto-eingabe")) {
     try {
       neueFotos = await verkleinereFoto(datei);
       zeigeFoto(neueFotos.foto);
+      zeigeAusschnitt(); // „Für die Puppe“ zeigt jetzt das neue Foto zum Ausschneiden
       await nachDemFoto();
     } catch (fehler) {
       console.error(fehler);
@@ -214,11 +219,22 @@ function zeigeKiStatus(text, istFehler = false) {
 knopfEinsetzen.hidden = !navigator.clipboard?.read;
 knopfEinsetzen.addEventListener("click", async () => {
   try {
+    const typen = [];
+    let text = "";
     for (const eintrag of await navigator.clipboard.read()) {
+      typen.push(...eintrag.types);
       const typ = eintrag.types.find((art) => art.startsWith("image/"));
       if (typ) return await uebernimmAusschnitt(await eintrag.getType(typ));
+      const textTyp = eintrag.types.find((art) => art === "text/uri-list" || art === "text/plain");
+      if (textTyp) text += await (await eintrag.getType(textTyp)).text();
     }
-    zeigeAusschnittStatus("In der Zwischenablage ist kein Bild. Kopier zuerst das ausgeschnittene Stück (siehe „So geht's“).", true);
+    if (/#teil\/|github\.io/.test(text)) {
+      // Langes Drücken auf ein Bild in der Garderobe kopiert nur den Link zum Stück
+      zeigeAusschnittStatus("Kopiert wurde nur ein Link, nicht das Bild. Drück lange auf das Foto hier im Kasten „Für die Puppe“ und tippe auf „Kopieren“.", true);
+    } else {
+      zeigeAusschnittStatus(`In der Zwischenablage ist kein Bild (sondern: ${typen.join(", ") || "nichts"}). ` +
+        "Drück lange auf das Foto hier im Kasten und tippe auf „Kopieren“.", true);
+    }
   } catch (fehler) {
     console.warn(fehler);
     zeigeAusschnittStatus("Einsetzen hat nicht geklappt. Tippe noch einmal auf „Einsetzen“ und bestätige mit „Einsetzen“.", true);
@@ -242,7 +258,7 @@ window.addEventListener("paste", (ereignis) => {
 
 knopfAusschnittWeg.addEventListener("click", () => {
   neuerAusschnitt = null;
-  zeigeAusschnitt(null);
+  zeigeAusschnitt();
   zeigeAusschnittStatus("Entfernt. Vergiss nicht zu speichern.");
 });
 
@@ -250,7 +266,7 @@ async function uebernimmAusschnitt(datei) {
   zeigeAusschnittStatus("Einen Moment …");
   try {
     neuerAusschnitt = await bereiteAusschnittVor(datei);
-    zeigeAusschnitt(neuerAusschnitt);
+    zeigeAusschnitt();
     zeigeAusschnittStatus("Eingesetzt! Vergiss nicht zu speichern.");
   } catch (fehler) {
     console.warn(fehler);
@@ -258,14 +274,24 @@ async function uebernimmAusschnitt(datei) {
   }
 }
 
-function zeigeAusschnitt(bild) {
-  if (ausschnittAdresse) URL.revokeObjectURL(ausschnittAdresse);
+// Zeigt das ausgeschnittene Bild. Gibt es noch keins: das Foto, auf das man lange drücken kann.
+function zeigeAusschnitt() {
+  const bild = neuerAusschnitt !== undefined ? neuerAusschnitt : bisherigesTeil?.ausgeschnitten || null;
+  const original = bild ? null : neueFotos?.foto || bisherigesTeil?.foto || null;
+  for (const adresse of [ausschnittAdresse, originalAdresse]) if (adresse) URL.revokeObjectURL(adresse);
   ausschnittAdresse = bild ? URL.createObjectURL(bild) : null;
+  originalAdresse = original ? URL.createObjectURL(original) : null;
+
+  ausschnittRahmen.classList.toggle("ist-ausgeschnitten", Boolean(bild));
   ausschnittBild.hidden = !bild;
-  ausschnittLeer.hidden = Boolean(bild);
+  ausschnittOriginal.hidden = !original;
+  ausschnittLeer.hidden = Boolean(bild || original);
+  ausschnittAnleitung.hidden = Boolean(bild);
   knopfAusschnittWeg.hidden = !bild;
   if (bild) ausschnittBild.src = ausschnittAdresse;
   else ausschnittBild.removeAttribute("src");
+  if (original) ausschnittOriginal.src = originalAdresse;
+  else ausschnittOriginal.removeAttribute("src");
 }
 
 function zeigeAusschnittStatus(text, istFehler = false) {
