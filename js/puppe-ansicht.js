@@ -14,6 +14,8 @@ const werkzeuge = document.getElementById("puppe-werkzeuge");
 const knopfAussehen = document.getElementById("knopf-puppe-aussehen");
 const knopfVerschieben = document.getElementById("knopf-puppe-verschieben");
 const aussehenFeld = document.getElementById("puppe-aussehen");
+const tipp = document.getElementById("puppe-tipp");
+const ausgewaehlt = document.getElementById("puppe-ausgewaehlt");
 
 let aussehen = { ...STANDARD_AUSSEHEN };
 let stuecke = [];      // die gewählten Stücke mit ausgeschnittenem Bild
@@ -64,6 +66,11 @@ function zeichne() {
   zeigeMarkierung();
 }
 
+// Tipp unter der Puppe: nur, wenn sie etwas trägt und man gerade nicht anpasst
+function zeigeTipp() {
+  tipp.hidden = verschieben || stuecke.length === 0;
+}
+
 function lage(platz) {
   return `x="${platz.x - platz.breite / 2}" y="${platz.y}" width="${platz.breite}" height="${platz.hoehe}"`;
 }
@@ -73,6 +80,8 @@ function zeigeMarkierung() {
   const teil = markiertesTeil();
   rahmen.style.display = verschieben && teil ? "" : "none"; // (SVG kennt kein „hidden“)
   for (const knopf of werkzeuge.querySelectorAll("button")) knopf.disabled = !teil;
+  ausgewaehlt.textContent = teil ? `Ausgewählt: ${teil.name}` : "Tippe ein Stück auf der Puppe an.";
+  zeigeTipp();
   if (!teil) return;
   const platz = platzVon(teil);
   rahmen.setAttribute("x", platz.x - platz.breite / 2 - 3);
@@ -132,7 +141,7 @@ function standardPlatz(teil) {
     case "kleid": return { x: 150, y: 150, ...(v < 0.7 ? lang(400, 170) : passe(156, 420)) };
     case "hose-rock": return { x: 150, y: 278, ...(v < 0.8 ? lang(412, 142) : passe(132, 300)) };
     case "schuhe": { const groesse = passe(100, 74); return { x: 150, y: 728 - groesse.hoehe, ...groesse }; }
-    case "tasche": return { x: 54, y: 376, ...passe(84, 110) };
+    case "tasche": return { x: 74, y: 392, ...passe(118, 150) }; // an der Hand, nicht zu klein (Nutzertest 15.11.)
     case "muetze": { const groesse = passe(108, 84); return { x: 150, y: 84 - groesse.hoehe, ...groesse }; }
     case "schal": return { x: 150, y: 128, ...passe(112, 170) };
     case "schmuck": return { x: 150, y: 150, ...passe(56, 80) };
@@ -165,8 +174,10 @@ function maskiert(text) {
 
 // ---------- Verschieben und Größe ändern ----------
 // Ein Finger: verschieben. Zwei Finger: größer oder kleiner. Dazu Knöpfe für alle, die lieber tippen.
-knopfVerschieben.addEventListener("click", () => {
-  verschieben = !verschieben;
+knopfVerschieben.addEventListener("click", () => setzeVerschieben(!verschieben));
+
+function setzeVerschieben(an) {
+  verschieben = an;
   if (!verschieben) markiert = null;
   else if (!markiert && stuecke.length) markiert = [...stuecke].sort((a, b) => ebeneVon(b) - ebeneVon(a))[0].id;
   knopfVerschieben.textContent = verschieben ? "Fertig" : "Stücke verschieben";
@@ -175,16 +186,29 @@ knopfVerschieben.addEventListener("click", () => {
   aussehenFeld.hidden = true;
   knopfAussehen.setAttribute("aria-pressed", false);
   svg?.classList.toggle("verschieben", verschieben);
-  zeigeMarkierung();
-});
+  if (svg) zeigeMarkierung();
+}
 
 const zeiger = new Map(); // Finger auf der Puppe: Nummer → Punkt in Puppen-Einheiten
 let anfang = null;        // Platz und Finger beim Start einer Bewegung
 
+// Ein Stück antippen öffnet gleich das Anpassen (Nutzertest 15.11.: der Knopf allein war nicht klar genug).
+// „click“ statt „pointerdown“: Wer auf der Puppe nur die Seite scrollt, löst nichts aus.
+// Dazu merken wir uns, wo der Finger aufgesetzt wurde: Hat er sich deutlich bewegt, war es kein Antippen.
+let aufgesetzt = null;
+bereich.addEventListener("click", (ereignis) => {
+  const ziel = ereignis.target.closest?.(".puppe-stueck");
+  const bewegt = aufgesetzt && Math.hypot(ereignis.clientX - aufgesetzt.x, ereignis.clientY - aufgesetzt.y) > 10;
+  if (verschieben || !ziel || bewegt) return;
+  markiert = ziel.dataset.id;
+  setzeVerschieben(true);
+});
+
 bereich.addEventListener("pointerdown", (ereignis) => {
+  aufgesetzt = { x: ereignis.clientX, y: ereignis.clientY };
   if (!verschieben || !svg) return;
+  const ziel = ereignis.target.closest?.(".puppe-stueck");
   if (zeiger.size === 0) {
-    const ziel = ereignis.target.closest?.(".puppe-stueck");
     if (ziel) markiert = ziel.dataset.id;
     zeigeMarkierung();
     if (!ziel) return;

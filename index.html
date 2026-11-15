@@ -304,9 +304,11 @@
       <!-- Die Anziehpuppe (siehe puppe.js und puppe-ansicht.js) -->
       <div class="karte puppe-karte">
         <div id="puppe-bereich" class="puppe-bereich"></div>
+        <p id="puppe-tipp" class="klein puppe-tipp" hidden>Tipp: Tippe ein Stück auf der Puppe an, um es zu verschieben oder größer zu machen.</p>
         <p id="puppe-fehlt" class="klein puppe-fehlt" hidden></p>
         <div id="puppe-werkzeuge" class="puppe-werkzeuge" hidden>
-          <p class="klein">Tippe ein Stück an. Mit einem Finger verschieben, mit zwei Fingern größer oder kleiner machen.</p>
+          <p id="puppe-ausgewaehlt" class="puppe-ausgewaehlt"></p>
+          <p class="klein">Mit einem Finger verschieben, mit zwei Fingern größer oder kleiner machen. Oder die Knöpfe benutzen:</p>
           <div class="puppe-knoepfe">
             <button class="knopf knopf-zweit" type="button" data-aktion="kleiner">Kleiner</button>
             <button class="knopf knopf-zweit" type="button" data-aktion="groesser">Größer</button>

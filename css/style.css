@@ -1316,3 +1316,13 @@ label.feld .feld-titel {
 .puppe-fehlt a {
   color: var(--text);
 }
+
+.puppe-tipp {
+  margin: 12px 0 0;
+  text-align: center;
+}
+
+.puppe-ausgewaehlt {
+  margin: 0 0 4px;
+  font-weight: 500;
+}
