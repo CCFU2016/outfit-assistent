@@ -91,6 +91,11 @@
       <h2 id="titel-anmeldung" class="bereich-titel">Anmelden</h2>
       <p class="klein einleitung">Mit deinem Konto ist deine Garderobe auf all deinen Geräten da.
         Dafür werden deine Stücke mit Fotos auf unserem Server in Europa gespeichert.</p>
+      <!-- Gastmodus (siehe konto.js): ohne Konto ausprobieren -->
+      <div id="gast-bereich" class="gast-bereich">
+        <button id="knopf-gast" class="knopf knopf-zweit knopf-breit" type="button">Ohne Konto ausprobieren</button>
+        <p class="klein">Nur mal reinschauen? Dann bleibt alles nur auf diesem Gerät, ohne automatisches Erkennen.</p>
+      </div>
       <form id="anmeldung-formular" class="karte anmeldung-karte" novalidate>
         <label class="feld">
           <span class="feld-titel">E-Mail</span>
@@ -163,7 +168,7 @@
       <!-- Sicherung: alle Stücke, Fotos und Looks in einer Datei (siehe sicherung.js) -->
       <div id="sicherung-karte" class="karte sicherung">
         <h3 class="sicherung-titel">Sicherung</h3>
-        <p class="klein">Zusätzlich zur Cloud kannst du alle Stücke als Datei sichern, z. B. in iCloud Drive. Doppelt hält besser.</p>
+        <p class="klein">Du kannst alle Stücke zusätzlich als Datei sichern, z. B. in iCloud Drive. Doppelt hält besser.</p>
         <p id="sicherung-stand" class="sicherung-stand"></p>
         <button id="knopf-sichern" class="knopf knopf-haupt knopf-breit" type="button">Sicherung speichern</button>
         <label class="knopf knopf-zweit knopf-breit">

@@ -12,6 +12,17 @@ import { frageServer } from "./verbindung.js";
 // Wer einmal angemeldet ist, bleibt es auf dem Gerät, auch ohne Internet.
 export const ANMELDUNG_PFLICHT = true;
 
+// Gastmodus (1.7): ohne Konto ausprobieren, z. B. für Mitschüler nach der Präsentation.
+// Alles bleibt nur auf diesem Gerät: kein automatisches Erkennen, keine Cloud, keine Kosten.
+// Wer sich später anmeldet, verlässt den Gastmodus.
+export async function istGast() {
+  return (await einstellungLesen("gast")) === true;
+}
+
+export function gastStarten() {
+  return einstellungSpeichern("gast", true);
+}
+
 // Ist die Anmeldung beim Server eingerichtet (gibt es die Datenbank)? Einmal pro Start gefragt.
 let moeglich = null;
 export function anmeldungMoeglich() {
@@ -33,12 +44,14 @@ export async function anmeldeKopf() {
 export async function anmelden(email, passwort) {
   const antwort = await frageServer("/konto/anmelden", { inhalt: { email, passwort } });
   await einstellungSpeichern("sitzung", { token: antwort.token, email: antwort.email });
+  await einstellungSpeichern("gast", false);
   return antwort.email;
 }
 
 export async function registrieren(email, passwort, einladungscode) {
   const antwort = await frageServer("/konto/registrieren", { inhalt: { email, passwort, einladungscode } });
   await einstellungSpeichern("sitzung", { token: antwort.token, email: antwort.email });
+  await einstellungSpeichern("gast", false);
   return antwort.email;
 }
 

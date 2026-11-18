@@ -479,6 +479,15 @@ body.formular-offen .inhalt {
   text-align: center;
 }
 
+.gast-bereich {
+  margin: 0 0 18px;
+  text-align: center;
+}
+
+.gast-bereich .klein {
+  margin: 8px 0 0;
+}
+
 /* ---------- Formular ---------- */
 .zurueck {
   display: inline-block;

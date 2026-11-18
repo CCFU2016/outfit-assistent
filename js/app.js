@@ -10,10 +10,10 @@ import { zeigeFormular } from "./teil-formular.js";
 import { zeigeOutfit } from "./outfit.js";
 import { zeigeWetter } from "./wetter-seite.js";
 import { zeigeAnmeldung } from "./anmeldung-seite.js";
-import { sitzung, ANMELDUNG_PFLICHT } from "./konto.js";
+import { sitzung, istGast, ANMELDUNG_PFLICHT } from "./konto.js";
 import { abgleichen } from "./cloud.js";
 
-const VERSION = "1.6.3 (Puppe leichter anpassen)";
+const VERSION = "1.7 (Ohne Konto ausprobieren)";
 
 const TABS = ["kleiderschrank", "outfit", "wetter"];
 
@@ -26,9 +26,11 @@ const TABS = ["kleiderschrank", "outfit", "wetter"];
 async function zeigeSeite() {
   const ziel = decodeURIComponent(location.hash.slice(1)); // "#outfit" → "outfit"
   const angemeldet = Boolean(await sitzung());
+  const gast = !angemeldet && (await istGast());
 
-  // Anmelden: wenn es Pflicht ist und noch niemand angemeldet ist, oder wenn man es selbst aufruft
-  const istAnmeldung = (ANMELDUNG_PFLICHT && !angemeldet) || (ziel === "anmeldung" && !angemeldet);
+  // Anmelden: wenn es Pflicht ist und noch niemand angemeldet ist (außer im Gastmodus),
+  // oder wenn man es selbst aufruft
+  const istAnmeldung = (ANMELDUNG_PFLICHT && !angemeldet && !gast) || (ziel === "anmeldung" && !angemeldet);
   if (ziel === "anmeldung" && angemeldet) {
     location.replace("#kleiderschrank"); // schon angemeldet: weiter zur Garderobe
     return;
@@ -56,7 +58,7 @@ async function zeigeSeite() {
     if (bereich === "outfit") await zeigeOutfit();
     if (bereich === "wetter") await zeigeWetter();
     if (istFormular) await zeigeFormular(ziel.startsWith("teil/") ? ziel.slice(5) : null);
-    if (istAnmeldung) zeigeAnmeldung();
+    if (istAnmeldung) await zeigeAnmeldung();
     document.getElementById("app-fehler").hidden = true;
   } catch (fehler) {
     console.error(fehler);

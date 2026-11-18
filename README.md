@@ -28,7 +28,7 @@ und lässt sich wie eine normale App auf den Startbildschirm legen.
 | `js/sicherung.js` | **Sicherung**: alle Stücke, Fotos und Looks in eine Datei speichern und wieder laden. |
 | `js/ki.js` | **Automatisch erkennen**: schickt das Vorschaubild an unseren Server und füllt das Formular aus. |
 | `js/verbindung.js` | Adresse des **Servers** und verständliche Fehlermeldungen. |
-| `js/konto.js`, `js/anmeldung-seite.js` | **Anmeldung**: anmelden, Konto anlegen (nur mit Einladungscode), abmelden. Schalter `ANMELDUNG_PFLICHT`. |
+| `js/konto.js`, `js/anmeldung-seite.js` | **Anmeldung**: anmelden, Konto anlegen (nur mit Einladungscode), abmelden. Schalter `ANMELDUNG_PFLICHT`. **Gastmodus** „Ohne Konto ausprobieren“: alles nur auf dem Gerät, ohne Erkennen und ohne Cloud. |
 | `js/cloud.js` | **Cloud**: holt Änderungen der anderen Geräte und lädt die von hier hoch. Die neueste Änderung gewinnt. |
 | `js/puppe.js` | Die **Anziehpuppe** als Zeichnung (SVG): Hautton, Haarfarbe, Frisur und Augenfarbe zum Auswählen. |
 | `js/puppe-ansicht.js` | Die Puppe auf der Seite **Look**: zieht die gewählten Stücke an, Stücke verschieben und größer/kleiner machen, Aussehen ändern. |
@@ -79,6 +79,8 @@ schon auf deinem Handy angekommen ist.
 - [x] Anmeldung: Konto nur mit Einladungscode, die App ist nur nach dem Anmelden nutzbar
 - [x] Cloud: Stücke, Fotos und „Heute getragen“ auf allen Geräten gleich (die neueste Änderung gewinnt)
 - [x] 2 Anziehpuppe: gezeichnete Figur zum Anpassen; Stücke ohne Hintergrund (iPhone: „Motiv kopieren“) ziehen sie an
+- [x] Puppe leichter anpassen: Stück auf der Puppe antippen (nach dem Nutzertest, Version 1.6.3)
+- [x] Gastmodus: Mitschüler können die App ohne Konto ausprobieren; alles bleibt auf ihrem Gerät, keine Kosten (Version 1.7)
 
 ## Lizenzen
 

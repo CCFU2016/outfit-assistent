@@ -4,6 +4,7 @@ import { teilLaden, teilSpeichern, teilLoeschen, neueId, bitteUmDauerhaftenSpeic
 import { verkleinereFoto, bereiteAusschnittVor } from "./fotos.js";
 import { KATEGORIEN, ACCESSOIRE_ARTEN, WAERME, FARBEN, ANLAESSE } from "./daten.js";
 import { kiVorhanden, kiBereit, erkenne } from "./ki.js";
+import { istGast } from "./konto.js";
 
 const formular = document.getElementById("teil-formular");
 const titel = document.getElementById("formular-titel");
@@ -102,7 +103,7 @@ export async function zeigeFormular(id) {
   }
   zeigeArtFeld();
   zeigeFoto(bisherigesTeil ? bisherigesTeil.foto : null);
-  knopfErkennen.hidden = !kiVorhanden() || !bisherigesTeil;
+  knopfErkennen.hidden = !kiVorhanden() || !bisherigesTeil || (await istGast());
   neuerAusschnitt = undefined;
   zeigeAusschnitt();
   zeigeAusschnittStatus("");
@@ -164,6 +165,10 @@ function zeigeFoto(bild) {
 // beim Bearbeiten nur den Knopf zeigen (damit nichts ungefragt überschrieben wird).
 async function nachDemFoto() {
   if (!kiVorhanden()) return;
+  if (await istGast()) {
+    zeigeKiStatus("Automatisch erkennen gibt es nur mit Konto. Trag die Angaben einfach selbst ein.");
+    return;
+  }
   knopfErkennen.hidden = false;
   if (!(await kiBereit())) {
     zeigeKiStatus("Tipp: Richte unten in der Garderobe „Automatisch erkennen“ ein, dann füllt Claude das Formular für dich aus.");

@@ -5,7 +5,7 @@ import { KATEGORIEN, ACCESSOIRE_ARTEN, WAERME, nameVon } from "./daten.js";
 import { bildAdressen, fotoBild } from "./bilder.js";
 import { sicherungSpeichern, sicherungLesen, sicherungLaden, letzteSicherung } from "./sicherung.js";
 import { kiVorhanden, zugangscode, zugangscodeSpeichern, codePruefen } from "./ki.js";
-import { sitzung, abmelden, anmeldungMoeglich, ANMELDUNG_PFLICHT } from "./konto.js";
+import { sitzung, istGast, abmelden, anmeldungMoeglich, ANMELDUNG_PFLICHT } from "./konto.js";
 import { abgleichen, cloudZustand } from "./cloud.js";
 
 const liste = document.getElementById("teile-liste");
@@ -117,12 +117,14 @@ async function zeichneKonto() {
     knopfZurAnmeldung.hidden = true;
     return;
   }
-  // Nicht angemeldet: Die Karte erscheint erst, wenn der Server die Anmeldung anbietet
-  const moeglich = await anmeldungMoeglich();
-  kontoKarte.hidden = !moeglich;
-  kontoStand.textContent = "Mit einem Konto ist deine Garderobe auf all deinen Geräten da.";
+  // Nicht angemeldet: Die Karte erscheint erst, wenn der Server die Anmeldung anbietet (im Gastmodus immer)
+  const [moeglich, gast] = await Promise.all([anmeldungMoeglich(), istGast()]);
+  kontoKarte.hidden = !moeglich && !gast;
+  kontoStand.textContent = gast
+    ? "Du probierst die App ohne Konto aus. Alles bleibt nur auf diesem Gerät."
+    : "Mit einem Konto ist deine Garderobe auf all deinen Geräten da.";
   knopfAbmelden.hidden = true;
-  knopfZurAnmeldung.hidden = false;
+  knopfZurAnmeldung.hidden = !moeglich;
 }
 
 // Zeigt, ob alles in der Cloud ist
@@ -163,7 +165,8 @@ const kiMeldung = document.getElementById("ki-meldung");
 
 async function zeichneKi() {
   // Wer angemeldet ist, braucht keinen Zugangscode mehr
-  kiKarte.hidden = !kiVorhanden() || Boolean(await sitzung());
+  // Gäste sehen sie nicht: Erkennen gibt es nur mit Konto
+  kiKarte.hidden = !kiVorhanden() || Boolean(await sitzung()) || (await istGast());
   if (kiKarte.hidden) return;
   kiStand.textContent = (await zugangscode()) ? "Eingerichtet ✓" : "Noch nicht eingerichtet: Tippe einmal den Zugangscode ein.";
 }

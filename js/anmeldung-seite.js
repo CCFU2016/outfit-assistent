@@ -1,7 +1,7 @@
 // anmeldung-seite.js – der Bildschirm „Anmelden“ / „Konto anlegen“
 // Die Arbeit mit dem Server macht konto.js.
 
-import { anmelden, registrieren, ANMELDUNG_PFLICHT } from "./konto.js";
+import { anmelden, registrieren, istGast, gastStarten, ANMELDUNG_PFLICHT } from "./konto.js";
 import { abgleichen } from "./cloud.js";
 
 const formular = document.getElementById("anmeldung-formular");
@@ -16,15 +16,26 @@ const knopf = document.getElementById("anmeldung-knopf");
 const frage = document.getElementById("anmeldung-frage");
 const wechsel = document.getElementById("anmeldung-wechsel");
 const zurueck = document.getElementById("anmeldung-zurueck");
+const gastBereich = document.getElementById("gast-bereich");
+const knopfGast = document.getElementById("knopf-gast");
 
 let neuesKonto = false; // false = Anmelden, true = Konto anlegen
 
-export function zeigeAnmeldung() {
+export async function zeigeAnmeldung() {
   meldung.hidden = true;
-  // Wenn man sich anmelden MUSS, gibt es kein „Zurück“
-  zurueck.parentElement.hidden = ANMELDUNG_PFLICHT;
+  const gast = await istGast();
+  // Wenn man sich anmelden MUSS, gibt es kein „Zurück“ (außer man probiert die App schon als Gast aus)
+  zurueck.parentElement.hidden = ANMELDUNG_PFLICHT && !gast;
+  gastBereich.hidden = gast;
   stelleEin();
 }
+
+// Ohne Konto ausprobieren: zur Garderobe, alles bleibt auf diesem Gerät
+knopfGast.addEventListener("click", async () => {
+  await gastStarten();
+  if (location.hash === "#kleiderschrank") window.dispatchEvent(new Event("anmeldung-geaendert"));
+  else location.hash = "#kleiderschrank";
+});
 
 function stelleEin() {
   titel.textContent = neuesKonto ? "Konto anlegen" : "Anmelden";
